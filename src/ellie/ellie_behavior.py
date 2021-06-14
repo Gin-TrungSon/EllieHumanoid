@@ -10,5 +10,9 @@ class EllieBehavior:
     def update(self, context):
         pass
     @abstractmethod
-    def last_update():
+    def last_update(self):
+        pass
+    
+    @abstractmethod
+    def on_exit(self):
         pass

@@ -25,33 +25,40 @@ class EllieEars(EllieBehavior):
         super().__init__()
     
     def update(self, context):
-        context.response = self._current_response
-        self._current_response = ""
+        with self._microphone as source:
+            audio = self._recognizer.adjust_for_ambient_noise(source)
+            audio = self._recognizer.listen(source=source)
+            msg = self._recognizer.recognize_google(audio,language='de-DE')
+            context.response = self.response(self._current_response)
+        return context
     
     audio_queue = Queue()
 
 
-    def _callback(self, recognizer, audio):
-        if self._is_busy: return
-        try:
-            response = self._recognizer.recognize_google(audio,language="de-DE")
-            self._current_response = self._ellie.response(response)
-        except sr.UnknownValueError:
-            print("I could not understand you")
-        except sr.RequestError as e:
-            print("Could not request results from Google Speech Recognition service; {0}".format(e))
+    # def _callback(self, recognizer, audio):
+    #     if self._is_busy: return
+    #     try:
+    #         response = self._recognizer.recognize_google(audio,language="de-DE")
+    #         self._current_response = self._ellie.response(response)
+    #     except sr.UnknownValueError:
+    #         print("I could not understand you")
+    #     except sr.RequestError as e:
+    #         print("Could not request results from Google Speech Recognition service; {0}".format(e))
 
-    def open(self):
-        self.background_listener = self._recognizer.listen_in_background(self._microphone,self._callback)
+    # def open(self):
+    #     self.background_listener = self._recognizer.listen_in_background(self._microphone,self._callback)
 
 
     def response(self, text):
         return self._ellie.response(text)
     
-    def stop_listening(self):
-        self._is_busy = True
-    def start_listening(self):
-        self._is_busy = False
+    def on_exit(self):
+        pass
+
+    # def stop_listening(self):
+    #     self._is_busy = True
+    # def start_listening(self):
+    #     self._is_busy = False
 
 from src.context import EllieContext
 if __name__=="__main__":

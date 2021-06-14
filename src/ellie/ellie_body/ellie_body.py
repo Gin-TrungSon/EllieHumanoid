@@ -1,7 +1,11 @@
 import sys
+
+from numpy import greater
+from ellie.ellie_eyes.ellie_eyes import EllieEyes
 sys.path.append("")
 from src.ellie.ellie_body.ellie_body_ultis import *
 from src.ellie.ellie_behavior import EllieBehavior
+PATH = os.path.abspath
 class Motors:
     """
     0:      l_elbow_y
@@ -49,10 +53,10 @@ class Motors:
             motor.goal_position=  amp * math.sin(2 * 3.14 * freq * t)
             time.sleep(0.01)
 
-
+HOST = "192.168.178.20"
 class EllieBody(EllieBehavior):
     def __init__(self, simulator= None) -> None:
-        self.robot = PoppyTorso(simulator="vrep")
+        self.robot = PoppyTorso(simulator=simulator, host = HOST)
         # with open("test.text","a" ) as f:
         #      f.write(str(self.robot.to_config()))
         #self.robot = from_json("src/body/config/torso.json")
@@ -61,7 +65,7 @@ class EllieBody(EllieBehavior):
     def attach_primitives(self, isCamera=True):
 
         # loop to attach all .move config file 
-        for file in glob.glob("src/body/actions/*.move"):
+        for file in glob.glob("/src/ellie/ellie_body/actions/*.move"):
             print(file)
             move_name = os.path.splitext(file)[0]
             self.robot.attach_primitive(EllieAction(self.robot,action=move_name),move_name)
@@ -74,9 +78,10 @@ class EllieBody(EllieBehavior):
 
         self.robot.attach_primitive(Rest(self.robot), 'rest')
         self.robot.attach_primitive(Off(self.robot), 'off')
+
     def setup(self):
         
-        with open("src/body/config/conf.json") as data:
+        with open("/src/ellie/ellie_body/config/conf.json") as data:
             ellie_cfg = json.load(data)
         port = ellie_cfg["robot"]["port"]
         name = ellie_cfg["robot"]["name"]
@@ -101,7 +106,15 @@ class EllieBody(EllieBehavior):
             print("Primitives attached successfull")
 
     def update(self, context):
-        pass
+        context.saw = EllieEyes()
+        if(context.saw.has_someone_in_frame):
+            self.greet()
+            pass
+        if(context.saw.has_someone_in_frame):
+            #TODO: implement any motion hier
+            pass
+
+        
     def learn(self):
         move = MoveRecorder(self.robot,100, self.robot.motors)
         self.roobt.compliant = True
@@ -123,7 +136,7 @@ class EllieBody(EllieBehavior):
         move_name = input("Enter the name of this sick move : ")
         move_name = move_name+".move"
 
-        with open("src/body/actions/"+move_name, 'w') as f:
+        with open("/src/ellie/ellie_body/actions/"+move_name, 'w') as f:
             try:
                 move.move.save(f)
             except:
@@ -151,7 +164,7 @@ class EllieBody(EllieBehavior):
                 move.wait_to_stop()
     @property
     def greet(self):
-        with open("src/body/actions/behave_handsup.move") as f:
+        with open("/src/ellie/ellie_body/actions/behave_handsup.move") as f:
                 m = Move.load(f) # chargement du .move
                 move = MovePlayer(self.robot,play_speed=0.2,move= m)
                 move.start()

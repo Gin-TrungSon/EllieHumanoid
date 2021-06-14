@@ -1,4 +1,4 @@
-from httplib2 import Response
+
 
 
 class EllieContext:
@@ -7,3 +7,4 @@ class EllieContext:
     face = None
     display = None
     response = None
+    saw = None

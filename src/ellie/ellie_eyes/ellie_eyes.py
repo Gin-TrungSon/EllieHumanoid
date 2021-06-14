@@ -29,21 +29,20 @@ class EllieEyes(EllieBehavior):
         self._eyes_thread.start()
     
     def update(self, context):
-        while not self._stopped and self.stream.isOpened():
-            try:
-                frame = self.stream.get_frame()
-                self._obj_frame, self._obj_boxes, self._obj_classes, self.scores = self.object_detection.inference(frame)
-                self.face_frame, self._acquaintances, self.centers = self.face_recogition.inference(frame)
-                if self.display:
-                    f = self.object_detection.draw_bbox( self.face_frame, self._obj_boxes, self._obj_classes, self.scores)
-                    cv2.imshow("frame",f)
-                if cv2.waitKey(1) & 0xFF == ord('q'):
-                    break
-            except KeyboardInterrupt:
-                break
-        self.stream.stop()
+        frame = self.stream.get_frame()
+        self._obj_frame, self._obj_boxes, self._obj_classes, self.scores = self.object_detection.inference(frame)
+        self.face_frame, self._acquaintances, self.centers = self.face_recogition.inference(frame)
+        if self.display:
+            f = self.object_detection.draw_bbox( self.face_frame, self._obj_boxes, self._obj_classes, self.scores)
+            cv2.imshow("frame",f)
+        context.saw = self
+        return context
 
-    def close(self):
+    def on_exit(self):
+        self.stream.stop()
+        self._close()
+
+    def _close(self):
         self._stopped = True
         self._eyes_thread.join()
 
