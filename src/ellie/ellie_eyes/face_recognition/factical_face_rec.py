@@ -2,12 +2,12 @@ import sys
 sys.path.append("")
 import  src.ellie.ellie_eyes.face_recognition.factical_recognition as factical_recognition
 from  src.ellie.ellie_eyes.ellie_eyes_utils import Stream
-import argparse
 import cv2.cv2 as cv2
 import numpy as np
 import time
 from threading import Thread
 import os
+
 
 DATA_PATH = os.path.join(os.path.dirname(__file__),"data")
 faces, names = factical_recognition.load_images(DATA_PATH)
@@ -38,7 +38,7 @@ class FaceRecognition():
         stream.stop()
 
     def inference(self,frame):
-        processing = True
+
         start = time.time()
         frame_img = cv2.resize(frame, (0, 0), None, 0.25, 0.25)
         frame_img = cv2.cvtColor(frame_img, cv2.COLOR_BGR2RGB)
@@ -77,8 +77,7 @@ class FaceRecognition():
                             cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
                 #detected.append(name)
                 #centers.append(((x1+x2)*0.5, (y1+y2)*0.5))
-        processing = False
-        fps=1/(time.time()-start+0.001)
+                
         #print("FPS: {}".format(fps))
         return frame,detected,centers
 

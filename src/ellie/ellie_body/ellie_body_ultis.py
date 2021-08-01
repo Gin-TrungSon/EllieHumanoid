@@ -17,7 +17,7 @@ import pypot.primitive
 from pypot.creatures import PoppyTorso
 import time
 import math
-import threading
+from threading import Thread
 from pypot.creatures import AbstractPoppyCreature
 import json
 from pypot.robot import from_json
@@ -25,6 +25,7 @@ from pypot.primitive import Primitive
 from pypot.primitive.move import MoveRecorder, Move, MovePlayer
 import glob
 import random
+
 
 
 ACTION_DIR =os.path.join(pathlib.Path(__file__).parent,"actions/*.move") 

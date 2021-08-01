@@ -1,10 +1,10 @@
 import sys
-
 from numpy import greater
-from ellie.ellie_eyes.ellie_eyes import EllieEyes
 sys.path.append("")
 from src.ellie.ellie_body.ellie_body_ultis import *
 from src.ellie.ellie_behavior import EllieBehavior
+
+
 PATH = os.path.abspath
 class Motors:
     """
@@ -41,7 +41,7 @@ class Motors:
         if wait == False:
             self._step_calculate(motor,amp,wait_time,freq)
         else:
-            thread = threading.Thread(target=self._step_calculate(motor,amp,wait_time,freq))
+            thread = Thread(target=self._step_calculate(motor,amp,wait_time,freq))
             thread.start()
 
     def _step_calculate(self,motor, amp,wait_time, freq):
@@ -55,18 +55,17 @@ class Motors:
 
 HOST = "192.168.178.20"
 class EllieBody(EllieBehavior):
-    def __init__(self, simulator= None) -> None:
-        self.robot = PoppyTorso(simulator=simulator, host = HOST)
+    def __init__(self, simulator= None) :
+        self.robot = PoppyTorso(simulator=simulator)
         # with open("test.text","a" ) as f:
         #      f.write(str(self.robot.to_config()))
         #self.robot = from_json("src/body/config/torso.json")
-        self.setup()
-        super.__init__()
+        self.motions =[]
+        self.setup()  
     def attach_primitives(self, isCamera=True):
 
         # loop to attach all .move config file 
-        for file in glob.glob("/src/ellie/ellie_body/actions/*.move"):
-            print(file)
+        for file in glob.glob("src/ellie/ellie_body/actions/*.move"):
             move_name = os.path.splitext(file)[0]
             self.robot.attach_primitive(EllieAction(self.robot,action=move_name),move_name)
 
@@ -81,7 +80,7 @@ class EllieBody(EllieBehavior):
 
     def setup(self):
         
-        with open("/src/ellie/ellie_body/config/conf.json") as data:
+        with open("src/ellie/ellie_body/config/conf.json") as data:
             ellie_cfg = json.load(data)
         port = ellie_cfg["robot"]["port"]
         name = ellie_cfg["robot"]["name"]
@@ -106,15 +105,58 @@ class EllieBody(EllieBehavior):
             print("Primitives attached successfull")
 
     def update(self, context):
-        context.saw = EllieEyes()
         if(context.saw.has_someone_in_frame):
             self.greet()
             pass
         if(context.saw.has_someone_in_frame):
             #TODO: implement any motion hier
             pass
+    
+    def startLearning(self):
+        self.move = MoveRecorder(self.robot,100, self.robot.motors)
+        self.roobt.compliant = True
+        self.move.start()
 
-        
+    def stopLearning(self):
+        if self.move != None:
+            self.move.stop()        
+            for m in self.robot.motors:
+                m.compliant = False
+                m.goal_position = 0
+
+    def replayLearnedMotion(self):
+        if self.move != None:
+            self.move.start()
+            self.move.wait_to_stop()
+    
+    def saveLearnedMotion(self, moveId):
+        if self.move != None:
+            move_name = moveId+".move"
+            with open("src/ellie/ellie_body/actions/"+move_name+".move", 'w') as file:
+                try:
+                    self.move.move.save(file)
+                except:
+                    print("Unable to save this motion")
+                else:
+                    print("Move successfully saved !")
+            self.move = None
+            try:
+                self.robot.attach_primitive(EllieAction(self.robot,movement=move_name),move_name)
+            except Exception as e:
+                raise
+            else:
+                print("Move successfully attached to the robot !")
+    
+    def deleteLearnedMotion(self):
+        self.move = None
+
+    def getMotions(self):
+        files = os.listdir("src/ellie/ellie_body/actions/")
+        self.motions= []
+        for i in range(len(files)):
+            self.motions.append(files[i].replace(".move",""))
+        return self.motions
+
     def learn(self):
         move = MoveRecorder(self.robot,100, self.robot.motors)
         self.roobt.compliant = True
@@ -126,7 +168,7 @@ class EllieBody(EllieBehavior):
             time.sleep()
         
         move.start()
-        input("Press enter to start recording")
+        input("Press enter to stop recording")
         move.stop()
     
         for m in self.robot.motors:
@@ -136,7 +178,7 @@ class EllieBody(EllieBehavior):
         move_name = input("Enter the name of this sick move : ")
         move_name = move_name+".move"
 
-        with open("/src/ellie/ellie_body/actions/"+move_name, 'w') as f:
+        with open("src/ellie/ellie_body/actions/"+move_name, 'w') as f:
             try:
                 move.move.save(f)
             except:
@@ -164,7 +206,7 @@ class EllieBody(EllieBehavior):
                 move.wait_to_stop()
     @property
     def greet(self):
-        with open("/src/ellie/ellie_body/actions/behave_handsup.move") as f:
+        with open("src/ellie/ellie_body/actions/behave_handsup.move") as f:
                 m = Move.load(f) # chargement du .move
                 move = MovePlayer(self.robot,play_speed=0.2,move= m)
                 move.start()
@@ -179,4 +221,6 @@ class EllieBody(EllieBehavior):
 
 if __name__=="__main__":
     ellie = EllieBody(simulator="vrep")
+    motions = ellie.getMotions()
+    print(motions)
     ellie.greet

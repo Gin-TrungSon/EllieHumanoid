@@ -1,10 +1,5 @@
 import cv2.cv2 as cv2
 from threading import Thread
-try:
-    from picamera.array import PiRGBArray
-    from picamera import Picamera 
-except:
-    pass
 import datetime
 import time 
 PI_CAMERA = False

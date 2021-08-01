@@ -3,18 +3,21 @@ sys.path.append("")
 from src.ellie.ellie_behavior import EllieBehavior
 from src.ellie.ellie_eyes.face_recognition.factical_face_rec import FaceRecognition
 from src.ellie.ellie_eyes.object_detection_lite.lite_detection import Lite_Detector
-from src.ellie.ellie_eyes.ellie_eyes_utils import *
-
+from imutils.video import VideoStream
+from threading import Thread
+import cv2.cv2 as cv2
 class EllieEyes(EllieBehavior):
     def __init__(self,display = False) :
         super().__init__()
         self.display = display
+        self.resolution = (320,240)
+        self.usePicamera = False
         self.face_recogition = FaceRecognition()
         self.object_detection = Lite_Detector()
-        if PI_CAMERA:
-            self.stream = PIStream()
+        if self.usePicamera:
+            self.stream = VideoStream(usePiCamera=True, resolution=self.resolution)
         else:
-            self.stream = Stream()
+            self.stream = VideoStream(resolution=self.resolution)
 
         self._obj_boxes = []
         self._obj_classes=[]
@@ -64,6 +67,7 @@ class EllieEyes(EllieBehavior):
 if __name__ =="__main__":
     e = EllieEyes(display=True)
     e.open()
+    import time
     while True:
         print(e.get_objects_in_frame())
         time.sleep(1)

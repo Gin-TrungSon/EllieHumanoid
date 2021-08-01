@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="comboB">
+    <file>cil-arrow-bottom.png</file>
+  </qresource>
+</RCC>
