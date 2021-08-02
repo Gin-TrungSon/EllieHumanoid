@@ -2,9 +2,6 @@ import sys
 import os
 sys.path.append("")
 from gtts import gTTS
-from gtts import gTTS
-from pygame import mixer
-import mutagen.mp3
 import os
 import glob
 import pathlib

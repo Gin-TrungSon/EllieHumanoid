@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*-
+import sys
 
+from PyQt5.sip import delete
+sys.path.append("")
 from PyQt5 import QtCore, QtGui, QtWidgets
 import os
 import json
+from pathlib import Path
+from src.ellie.ellie_body.ellie_body import EllieBody
 
 class CameraSettings:
     pass
@@ -14,12 +19,13 @@ class Behavior:
             "body_motion" : body_motion,
             "speak"       : speak, 
         }
-        return self
 
     def save(self):
         with open(f"src/ellie/behaviors/{self.id}.json", "w") as write_file:
             json.dump(self.behavior, write_file)
-
+    @property
+    def isFileExisted(self):
+        return Path(f"src/ellie/behaviors/{self.id}.json").is_file()
 class Ui_Form(QtWidgets.QWidget):
     def setupUi(self, Form):
         self.form = Form
@@ -292,6 +298,7 @@ class Ui_Form(QtWidgets.QWidget):
                                         "background-color: rgb(164, 180, 148);\n"
                                         "}")
         self.pushButton_8.setObjectName("pushButton_8")
+
         self.pushButton_12 = QtWidgets.QPushButton(self.frame_8)
         self.pushButton_12.setGeometry(QtCore.QRect(90, 70, 75, 23))
         self.pushButton_12.setStyleSheet("QPushButton {\n"
@@ -304,6 +311,8 @@ class Ui_Form(QtWidgets.QWidget):
                                          "background-color: rgb(164, 180, 148);\n"
                                          "}")
         self.pushButton_12.setObjectName("pushButton_12")
+        self.pushButton_12.setEnabled(False)
+
         self.pushButton_13 = QtWidgets.QPushButton(self.frame_8)
         self.pushButton_13.setGeometry(QtCore.QRect(170, 70, 75, 23))
         self.pushButton_13.setStyleSheet("QPushButton {\n"
@@ -316,6 +325,8 @@ class Ui_Form(QtWidgets.QWidget):
                                          "background-color: rgb(164, 180, 148);\n"
                                          "}")
         self.pushButton_13.setObjectName("pushButton_13")
+        self.pushButton_13.setEnabled(False)
+
         self.pushButton_14 = QtWidgets.QPushButton(self.frame_8)
         self.pushButton_14.setGeometry(QtCore.QRect(250, 70, 75, 23))
         self.pushButton_14.setStyleSheet("QPushButton {\n"
@@ -328,6 +339,8 @@ class Ui_Form(QtWidgets.QWidget):
                                          "background-color: rgb(164, 180, 148);\n"
                                          "}")
         self.pushButton_14.setObjectName("pushButton_14")
+        self.pushButton_14.setEnabled(False)
+
         self.pushButton_15 = QtWidgets.QPushButton(self.frame_8)
         self.pushButton_15.setGeometry(QtCore.QRect(330, 70, 75, 23))
         self.pushButton_15.setStyleSheet("QPushButton {\n"
@@ -340,6 +353,8 @@ class Ui_Form(QtWidgets.QWidget):
                                          "background-color: rgb(164, 180, 148);\n"
                                          "}")
         self.pushButton_15.setObjectName("pushButton_15")
+        self.pushButton_15.setEnabled(False)
+
         self.label_10 = QtWidgets.QLabel(self.frame_8)
         self.label_10.setGeometry(QtCore.QRect(10, 10, 131, 16))
         font = QtGui.QFont()
@@ -351,7 +366,7 @@ class Ui_Form(QtWidgets.QWidget):
         self.frame_9.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_9.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_9.setObjectName("frame_9")
-        self.pushButton_20 = QtWidgets.QPushButton(self.frame_9)
+        self.pushButton_20 = QtWidgets.QPushButton(self.frame_9, clicked = lambda : self.resetBodyMotions())
         self.pushButton_20.setGeometry(QtCore.QRect(200, 30, 75, 23))
         self.pushButton_20.setStyleSheet("QPushButton {\n"
                                          "    color: rgb(255, 255, 255);\n"
@@ -400,13 +415,13 @@ class Ui_Form(QtWidgets.QWidget):
         self.label_14 = QtWidgets.QLabel(self.frame_10)
         self.label_14.setGeometry(QtCore.QRect(10, 0, 71, 31))
         self.label_14.setObjectName("label_14")
-        self.comboBox_4 = QtWidgets.QComboBox(self.frame_10)
-        self.comboBox_4.setGeometry(QtCore.QRect(110, 0, 141, 31))
-        self.comboBox_4.setStyleSheet("")
-        self.comboBox_4.setObjectName("comboBox_4")
+        self.eye_motions = QtWidgets.QComboBox(self.frame_10)
+        self.eye_motions.setGeometry(QtCore.QRect(110, 0, 141, 31))
+        self.eye_motions.setStyleSheet("")
+        self.eye_motions.setObjectName("comboBox_4")
         eye_motions = self.getEyeMotions()
         for i in eye_motions:
-            self.comboBox_4.addItem(i)
+            self.eye_motions.addItem(i)
         self.frame_11 = QtWidgets.QFrame(self.behavior_page)
         self.frame_11.setGeometry(QtCore.QRect(290, 90, 271, 31))
         self.frame_11.setFrameShape(QtWidgets.QFrame.StyledPanel)
@@ -415,12 +430,12 @@ class Ui_Form(QtWidgets.QWidget):
         self.label_15 = QtWidgets.QLabel(self.frame_11)
         self.label_15.setGeometry(QtCore.QRect(10, 0, 71, 31))
         self.label_15.setObjectName("label_15")
-        self.comboBox_6 = QtWidgets.QComboBox(self.frame_11)
-        self.comboBox_6.setGeometry(QtCore.QRect(110, 0, 141, 31))
-        self.comboBox_6.setStyleSheet("")
-        self.comboBox_6.setObjectName("comboBox_6")
+        self.body_motions = QtWidgets.QComboBox(self.frame_11)
+        self.body_motions.setGeometry(QtCore.QRect(110, 0, 141, 31))
+        self.body_motions.setStyleSheet("")
+        self.body_motions.setObjectName("comboBox_6")
         for i in motions:
-            self.comboBox_6.addItem(i)
+            self.body_motions.addItem(i)
         self.frame_12 = QtWidgets.QFrame(self.behavior_page)
         self.frame_12.setGeometry(QtCore.QRect(30, 130, 331, 31))
         self.frame_12.setFrameShape(QtWidgets.QFrame.StyledPanel)
@@ -451,9 +466,9 @@ class Ui_Form(QtWidgets.QWidget):
         self.frame_13.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_13.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_13.setObjectName("frame_13")
-        self.pushButton_21 = QtWidgets.QPushButton(self.frame_13)
-        self.pushButton_21.setGeometry(QtCore.QRect(200, 22, 71, 31))
-        self.pushButton_21.setStyleSheet("QPushButton {\n"
+        self.removeBehaviorButton = QtWidgets.QPushButton(self.frame_13, clicked = lambda: self.removeBehavior())
+        self.removeBehaviorButton.setGeometry(QtCore.QRect(200, 22, 71, 31))
+        self.removeBehaviorButton.setStyleSheet("QPushButton {\n"
                                          "    color: rgb(255, 255, 255);\n"
                                          "    background-color: rgb(59, 82, 73);\n"
                                          "    border: 0px solid;\n"
@@ -462,13 +477,14 @@ class Ui_Form(QtWidgets.QWidget):
                                          "QPushButton:hover {\n"
                                          "background-color: rgb(164, 180, 148);\n"
                                          "}")
-        self.pushButton_21.setObjectName("pushButton_21")
+        self.removeBehaviorButton.setObjectName("pushButton_21")
 
         self.comboBox_7 = QtWidgets.QComboBox(self.frame_13)
         self.comboBox_7.setGeometry(QtCore.QRect(10, 20, 151, 31))
         self.comboBox_7.setObjectName("comboBox_7")
-        self.comboBox_7.addItem("")
-        self.comboBox_7.addItem("")
+        behaviors = self.getBehaviors()
+        for i in behaviors:
+            self.comboBox_7.addItem(i)
         self.label_17 = QtWidgets.QLabel(self.frame_13)
         self.label_17.setGeometry(QtCore.QRect(10, 0, 161, 16))
         font = QtGui.QFont()
@@ -659,17 +675,14 @@ class Ui_Form(QtWidgets.QWidget):
         self.pushButton_20.setText(_translate("Form", "Remove"))
         self.label_11.setText(_translate("Form", "Remove existed motion"))
         self.label_13.setText(_translate("Form", "Behavior"))
-        self.behavior_id.setText(_translate("Form", "Behavior Id"))
-        self.behavior_id.setPlaceholderText(_translate("Form", "Moving Id"))
+        self.behavior_id.setPlaceholderText(_translate("Form", "Behavior Id"))
         self.label_14.setText(_translate("Form", "Eyes motion :"))
         self.label_15.setText(_translate("Form", "Body motion :"))
         self.label_16.setText(_translate("Form", "Speak :"))
         self.lineEdit_5.setPlaceholderText(_translate("Form", "say anything"))
         self.pushButton_16.setText(_translate("Form", "Create"))
-        self.pushButton_21.setText(_translate("Form", "Remove"))
+        self.removeBehaviorButton.setText(_translate("Form", "Remove"))
         self.pushButton_22.setText(_translate("Form", "Add"))
-        self.comboBox_7.setItemText(0, _translate("Form", "1"))
-        self.comboBox_7.setItemText(1, _translate("Form", "2"))
         self.label_17.setText(_translate("Form", "Remove existed behavior"))
         self.label_18.setText(_translate("Form", "Listen"))
         self.label_19.setText(_translate("Form", "Question :"))
@@ -697,6 +710,47 @@ class Ui_Form(QtWidgets.QWidget):
         else :
             self.label_2.setVisible(True)
             self.__authenticated= False
+        self.ellieBody = EllieBody("vrep")
+    
+    def startLearning(self):
+        if self.ellieBody != None :
+            self.ellieBody.startLearning()
+            self.pushButton_8.setEnabled(False)
+            self.pushButton_12.setEnabled(True)
+    
+    def stopLearning(self):
+        if self.ellieBody != None :
+            self.ellieBody.stopLearning()
+            self.pushButton_13.setEnabled(True)
+            self.pushButton_14.setEnabled(True)
+            self.pushButton_15.setEnabled(True)
+            self.pushButton_12.setEnabled(False)
+
+    def replay(self):
+        if self.ellieBody != None :
+            self.ellieBody.replayLearnedMotion()
+    
+    def saveBodyMotion(self):
+        if self.ellieBody != None :
+            path = f"src/ellie/ellie_body/actions/{self.lineEdit_2.text()}.move"
+            if Path(path).is_file():
+                self.popUpFileExist(self.lineEdit_2.text())
+            self.ellieBody.saveLearnedMotion(self.lineEdit_2.text())
+            self.pushButton_8.setEnabled(True)
+            self.pushButton_13.setEnabled(False)
+            self.pushButton_14.setEnabled(False)
+            self.pushButton_15.setEnabled(False)
+            self.pushButton_12.setEnabled(False)
+    
+    def deleteLearnedMotion(self):
+        if self.ellieBody != None :
+            self.ellieBody.deleteLearnedMotion()
+            self.pushButton_8.setEnabled(True)
+            self.pushButton_13.setEnabled(False)
+            self.pushButton_14.setEnabled(False)
+            self.pushButton_15.setEnabled(False)
+            self.pushButton_12.setEnabled(False)
+    
     def OnStartButtonClicked(self):
         self.form.close()
  
@@ -717,6 +771,13 @@ class Ui_Form(QtWidgets.QWidget):
         for i in range(len(files)):
             self.motions.append(files[i].replace(".move",""))
         return self.motions
+    
+    def getBehaviors(self):
+        files = os.listdir("src/ellie/behaviors")
+        behaviours= []
+        for i in range(len(files)):
+            behaviours.append(files[i].replace(".json",""))
+        return behaviours
 
     def getEyeMotions(self):
         files = os.listdir("src/ellie/ellie_eyes/eye_motions/")
@@ -726,8 +787,57 @@ class Ui_Form(QtWidgets.QWidget):
         return self.motions
 
     def createNewBehavior(self):
-        newBehavior = Behavior(self.behavior_id.text(), self.comboBox_4.currentText())
+        newBehavior = Behavior(self.behavior_id.text(), self.eye_motions.currentText(),self.body_motions.currentText(),self.lineEdit_5.text())
+        if newBehavior.isFileExisted:
+            if self.popUpFileExist(self.behavior_id.text()) == False:
+                return
+        newBehavior.save()
+        self.resetBehaviors()
+    
+    def removeFile(self, file):
+        if os.path.exists(file):
+            os.remove(file)
 
+    def removeBehavior(self):
+        file = f"src/ellie/behaviors/{self.comboBox_7.currentText()}.json"
+        self.removeFile(file)
+        self.resetBehaviors()
+
+    def removeBodyMotion(self):
+        file = f"src/ellie/ellie_body/actions/{self.comboBox_5.currentText()}.move"
+        self.removeFile(file)
+        self.resetBodyMotions()
+
+    def resetBehaviors(self):
+        self.comboBox_7.clear()
+        behaviors = self.getBehaviors()
+        for i in behaviors:
+            self.comboBox_7.addItem(i)
+        self.comboBox_7.repaint()
+
+    def resetBodyMotions(self):
+        self.body_motions.clear()
+        self.comboBox_5.clear()
+        motions = self.getMotions()
+        for i in motions:
+            self.body_motions.addItem(i)
+            self.comboBox_5.addItem(i)
+
+
+
+
+    def popUpFileExist(self, id):
+        msg = QtWidgets.QMessageBox()
+        msg.setWindowTitle("File existed")
+        msg.setText(f"The file {id} already exists. Do you want to replace it ?   ")
+        msg.setStandardButtons(QtWidgets.QMessageBox.StandardButton.Cancel | QtWidgets.QMessageBox.StandardButton.Ok)
+        msg.setDefaultButton(QtWidgets.QMessageBox.StandardButton.Ok)
+        popup = msg.exec()
+        if popup == QtWidgets.QMessageBox.StandardButton.Ok:
+            return True
+        elif popup == QtWidgets.QMessageBox.StandardButton.Cancel:
+            return False
+        
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
