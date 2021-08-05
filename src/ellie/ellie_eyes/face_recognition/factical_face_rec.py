@@ -63,10 +63,10 @@ class FaceRecognition():
                                 (0, 255, 0), cv2.FILLED)
                 cv2.putText(frame, f"{name} {np.round(1-distances[matchIndex],2)} ", (x1+6, y2-6),
                             cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
-                detected.append(name)
+                detected.append(name.lower())
                 centers.append(((x1+x2)*0.5, (y1+y1)*0.5))
             else:
-                name = "Unknow"
+                name = "unknow"
                 bb = faceLocation
                 y1, x2, y2, x1 = faceLocation
                 y1, x2, y2, x1 = y1*4, x2*4, y2*4, x1*4

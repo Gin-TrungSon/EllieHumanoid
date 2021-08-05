@@ -1,20 +1,17 @@
-import os
-import argparse
-import cv2
 import numpy as np
-import sys
-sys.path.append("")
+import cv2
+import argparse
+import os
 import time
 from threading import Thread
 import importlib.util
-import datetime
-from src.ellie.ellie_eyes.ellie_eyes_utils import *
+from imutils.video import VideoStream,FPS 
+
 try:
     from picamera.array import PiRGBArray
     from picamera import PiCamera
 except:
     pass
-
 
 
 USE_TPU = False  # Coral Edge TPU
@@ -32,15 +29,16 @@ else:
     if USE_TPU:
         from tensorflow.lite.python.interpreter import load_delegate
 
-LABELS_PATH = os.path.join(os.path.dirname(__file__),"tmp/labelmap.txt")
+LABELS_PATH = os.path.join(os.path.dirname(__file__), "tmp/labelmap.txt")
 with open(LABELS_PATH, 'r') as f:
     LABElS = [line.strip() for line in f.readlines()]
 if USE_TPU:
-    MODEL_PATH = os.path.join(os.path.dirname(__file__),"tmp/mobilenet_ssd_v2_coco_quant_postprocess_edgetpu.tflite")
+    MODEL_PATH = os.path.join(os.path.dirname(
+        __file__), "tmp/mobilenet_ssd_v2_coco_quant_postprocess_edgetpu.tflite")
     interpreter = Interpreter(model_path=MODEL_PATH,
                               experimental_delegates=[load_delegate('libedgetpu.so.1.0')])
 else:
-    MODEL_PATH = os.path.join(os.path.dirname(__file__),"tmp/detect.tflite")
+    MODEL_PATH = os.path.join(os.path.dirname(__file__), "tmp/detect.tflite")
     interpreter = Interpreter(model_path=MODEL_PATH)
 
 
@@ -57,9 +55,10 @@ class Lite_Detector():
         self.width = self.input_details[0]['shape'][2]
 
         self.float_model = (self.input_details[0]['dtype'] == np.float32)
+
     def inference(self, frame):
-        handled_frame= cv2.resize(frame, (self.width, self.height),
-                        interpolation=cv2.INTER_AREA)
+        handled_frame = cv2.resize(frame, (self.width, self.height),
+                                   interpolation=cv2.INTER_AREA)
         input_data = np.expand_dims(handled_frame, axis=0)
 
         # Normalize if its a floating model
@@ -77,38 +76,38 @@ class Lite_Detector():
             self.output_details[1]['index'])[0]
         # Confidence
         scores = interpreter.get_tensor(self.output_details[2]['index'])[0]
-        rboxes =[]
-        rclasses =[]
-        rscores =[]
+        rboxes = []
+        rclasses = []
+        rscores = []
         for i in range(len(scores)):
             if scores[i] >= THRESHOLD and LABElS[int(classes[i])] != "???":
                 rscores.append(scores[i])
-                rclasses.append( LABElS[int(classes[i])])
+                rclasses.append(LABElS[int(classes[i])])
                 rboxes.append(boxes[i])
 
         return frame, rboxes, rclasses, rscores
 
     def detect_from_cam(self):
         if PI_CAMERA:
-            stream = PIStream().start()
+            stream = VideoStream(usePiCamera=True, resolution=RESOLUTION)
             fps = FPS().start()
-
             while stream.isOpened():
                 try:
                     start = time.time()
                     frame = stream.get_frame()
-                    frame, boxes, classes, scores= self.inference(frame)
+                    frame, boxes, classes, scores = self.inference(frame)
                     frame = self.draw_bbox(frame, boxes, classes, scores)
                     frame_rate = 1/(time.time()-start+0.001)
-                    cv2.putText(frame, 'FPS: {0:.2f}'.format(frame_rate), (30, 50),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 0),1,cv2.LINE_AA)
+                    cv2.putText(frame, 'FPS: {0:.2f}'.format(
+                        frame_rate), (30, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 0), 1, cv2.LINE_AA)
                     cv2.imshow('lite_detector', frame)
                     if cv2.waitKey(1) & 0xFF == ord('q'):
                         break
                 except KeyboardInterrupt:
                     cv2.destroyAllWindows()
-                    break  
-        else:        
-            stream = Stream().start()  # start new thread
+                    break
+        else:
+            stream = VideoStream(resolution=RESOLUTION).start()  # start new thread
             time.sleep(1)
             while stream.isOpened():
                 try:
@@ -117,7 +116,7 @@ class Lite_Detector():
                     origin_frame = stream.get_frame()
                     frame = origin_frame.copy()
                     #frame = cv2.cvtColor(frame,cv2.COLOR_BGR2RGB)
-                    frame, boxes, classes, scores= self.inference(frame)
+                    frame, boxes, classes, scores = self.inference(frame)
                     frame = self.draw_bbox(frame, boxes, classes, scores)
                     frame_rate = 1/(time.time()-start+0.001)
                     cv2.putText(frame, 'FPS: {0:.2f}'.format(
@@ -142,14 +141,13 @@ class Lite_Detector():
                 xmax = int(min(RESOLUTION[0], (boxes[i][3] * RESOLUTION[0])))
 
                 cv2.rectangle(frame, (xmin, ymin),
-                            (xmax, ymax), (0, 255, 0), 2)
+                              (xmax, ymax), (0, 255, 0), 2)
                 cv2.rectangle(frame, (xmin, ymax-35),
-                            (xmax, ymax), (0, 255, 0), cv2.FILLED)
+                              (xmax, ymax), (0, 255, 0), cv2.FILLED)
                 cv2.putText(frame, "{} {:.2f}".format(classes[i], scores[i]), (xmin+6, ymax-6),
                             cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
         return frame
 
-# https://www.pyimagesearch.com/2015/12/28/increasing-raspberry-pi-fps-with-python-and-opencv/
-# By doing this, we can increase the FPS rate of our video processing pipeline by 246%!
 
-
+if __name__ == "__main__":
+    l = Lite_Detector()

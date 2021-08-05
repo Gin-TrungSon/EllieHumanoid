@@ -10,19 +10,20 @@ from pydub import AudioSegment
 from pydub.playback import play
 from pydub import effects
 
-DIR_TEMP = os.path.join(pathlib.Path(__file__).parent,"temp")
+DIR_TEMP = "src/ellie/ellie_voice/temp/"
 class EllieVoice:
     def __init__(self):
         filelist = glob.glob(os.path.join(DIR_TEMP, "*"))
         for f in filelist:
             os.remove(f)
+            pass
 
     def speak(self,text):
         tts = gTTS(text, lang="de",slow=False)
-        file_name=os.path.join(DIR_TEMP, "{}.mp3".format(time.time()))
+        file_name=DIR_TEMP+f"{format(time.time())}.mp3"
         tts.save(file_name)  
         audio = AudioSegment.from_mp3(file_name)
-        audio = effects.speedup(audio,1.2)
+        audio = effects.speedup(audio,1.3)
         play(audio)
         # speech_file = file_name
         # mp3 = mutagen.mp3.MP3(speech_file)

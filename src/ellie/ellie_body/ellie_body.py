@@ -53,7 +53,6 @@ class Motors:
             motor.goal_position=  amp * math.sin(2 * 3.14 * freq * t)
             time.sleep(0.01)
 
-HOST = "192.168.178.20"
 class EllieBody(EllieBehavior):
     def __init__(self, simulator= None) :
         self.robot = PoppyTorso(simulator=simulator)
@@ -204,6 +203,14 @@ class EllieBody(EllieBehavior):
                 move = MovePlayer(self.robot,play_speed=0.1,move= m)
                 move.start()
                 move.wait_to_stop()
+
+    def do(self, moveId, speed = 0.2, wait_to_stop = True):
+        with open(f"src/ellie/ellie_body/actions/{moveId}.move") as f:
+                m = Move.load(f) # chargement du .move
+                move = MovePlayer(self.robot,speed=0.2,move= m)
+                move.start()
+                if wait_to_stop:
+                     move.wait_to_stop()
     @property
     def greet(self):
         with open("src/ellie/ellie_body/actions/behave_handsup.move") as f:

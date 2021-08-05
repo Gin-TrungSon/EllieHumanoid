@@ -21,9 +21,10 @@ class EllieEyes(EllieBehavior):
 
         self._obj_boxes = []
         self._obj_classes=[]
-        self._acquaintances=[]
+        self._registeredPerson=[]
         self._centers=[]
         self._stopped = False
+        self.open()
     
     def open(self):
         self.stream.start() 
@@ -31,15 +32,13 @@ class EllieEyes(EllieBehavior):
         self._eyes_thread.daemon= True
         self._eyes_thread.start()
     
-    def update(self, context):
-        frame = self.stream.get_frame()
+    def update(self):
+        frame = self.stream.read()
         self._obj_frame, self._obj_boxes, self._obj_classes, self.scores = self.object_detection.inference(frame)
-        self.face_frame, self._acquaintances, self.centers = self.face_recogition.inference(frame)
+        self.face_frame, self._registeredPerson, self.centers = self.face_recogition.inference(frame)
         if self.display:
             f = self.object_detection.draw_bbox( self.face_frame, self._obj_boxes, self._obj_classes, self.scores)
             cv2.imshow("frame",f)
-        context.saw = self
-        return context
 
     def on_exit(self):
         self.stream.stop()
@@ -49,8 +48,8 @@ class EllieEyes(EllieBehavior):
         self._stopped = True
         self._eyes_thread.join()
 
-    def get_acquaintances(self):
-        return self._acquaintances
+    def get_registeredPerson(self):
+        return self._registeredPerson
     
     def get_objects_in_frame(self):
         return self._obj_classes
@@ -58,7 +57,7 @@ class EllieEyes(EllieBehavior):
     def has_someone_in_frame(self):
         return "person" in self._obj_classes
     
-    def nof_people_in_frane(self):
+    def nof_people_in_frame(self):
         return len([i for i in self._obj_classes if i =="person"])
 
     def isOpened(self):
@@ -66,7 +65,6 @@ class EllieEyes(EllieBehavior):
 
 if __name__ =="__main__":
     e = EllieEyes(display=True)
-    e.open()
     import time
     while True:
         print(e.get_objects_in_frame())

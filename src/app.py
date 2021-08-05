@@ -8,24 +8,7 @@ import os
 import json
 from pathlib import Path
 from src.ellie.ellie_body.ellie_body import EllieBody
-
-class CameraSettings:
-    pass
-class Behavior:
-    def __init__(self, id,eyes_motion, body_motion, speak ) :
-        self.id = id
-        self.behavior={
-            "eyes_motion" : eyes_motion,
-            "body_motion" : body_motion,
-            "speak"       : speak, 
-        }
-
-    def save(self):
-        with open(f"src/ellie/behaviors/{self.id}.json", "w") as write_file:
-            json.dump(self.behavior, write_file)
-    @property
-    def isFileExisted(self):
-        return Path(f"src/ellie/behaviors/{self.id}.json").is_file()
+from src.ellie.ellie_behavior import EllieBehavior
 class Ui_Form(QtWidgets.QWidget):
     def setupUi(self, Form):
         self.form = Form
@@ -710,7 +693,10 @@ class Ui_Form(QtWidgets.QWidget):
         else :
             self.label_2.setVisible(True)
             self.__authenticated= False
-        self.ellieBody = EllieBody("vrep")
+        try:
+           self.ellieBody = EllieBody("vrep")
+        except: 
+            self.ellieBody = None
     
     def startLearning(self):
         if self.ellieBody != None :
