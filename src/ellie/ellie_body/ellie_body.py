@@ -1,5 +1,4 @@
 import sys
-from numpy import greater
 sys.path.append("")
 from src.ellie.ellie_body.ellie_body_ultis import *
 from src.ellie.ellie_behavior import EllieBehavior

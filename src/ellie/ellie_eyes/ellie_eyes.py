@@ -1,19 +1,18 @@
+from multiprocessing.context import Process
 import sys
-from time import sleep
 sys.path.append("")
+from time import sleep
 from src.ellie.ellie_behavior import EllieBehavior
 from src.ellie.ellie_eyes.face_recognition.factical_face_rec import FaceRecognition
-from src.ellie.ellie_eyes.object_detection_lite.lite_detection import Lite_Detector
-from src.ellie.ellie_eyes.ellie_eyes_utils import FPS, Stream
+from src.ellie.ellie_eyes.object_detection_lite.lite_detection import *
 from imutils.video import VideoStream
-from threading import Thread
 import cv2.cv2 as cv2
 import time
 class EllieEyes(EllieBehavior):
     def __init__(self,display = False) :
         super().__init__()
         self.display = display
-        self.resolution = (320,240)
+        self.resolution = (640,480)
         self.usePicamera = False
         self.face_recogition = FaceRecognition()
         self.object_detection = Lite_Detector()
@@ -27,16 +26,9 @@ class EllieEyes(EllieBehavior):
         self._registeredPerson=[]
         self._centers=[]
         self._stopped = False
-        self.open()
+        self.stream.start()
         sleep(2)
     
-    def open(self):
-        self.stream.start() 
-        #cv2.startWindowThread()
-        #self._eyes_thread = Thread(target=self.__updateTheard, args=())
-        #self._eyes_thread.daemon= True
-        #self._eyes_thread.start()
-        #pass
     
     def update(self):
         frame = self.stream.read()
@@ -48,17 +40,14 @@ class EllieEyes(EllieBehavior):
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 cv2.destroyAllWindows() 
 
-    def __updateTheard(self):
-        while True:
-            self.update()
 
     def on_exit(self):
         self.stream.stop()
+        cv2.destroyAllWindows() 
         self._close()
 
     def _close(self):
         self._stopped = True
-        self._eyes_thread.join()
 
     def get_registeredPerson(self):
         return self._registeredPerson
@@ -74,9 +63,13 @@ class EllieEyes(EllieBehavior):
 
 if __name__ =="__main__":
     e = EllieEyes(display=True)
-    while True:
-        start = time.time()
-        e.update()
-        #print(e.get_objects_in_frame())
-        #print(time.time()-start)
-        time.sleep(1)
+    try:
+        while True:
+            start = time.time()
+            e.update()
+            #print(e.get_objects_in_frame())
+            print(time.time()-start)
+            print(e.get_objects_in_frame())
+
+    except KeyboardInterrupt:
+        e.on_exit()

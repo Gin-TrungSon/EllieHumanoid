@@ -1,4 +1,3 @@
-from http.client import responses
 import sys
 from threading import Thread
 import time
@@ -9,7 +8,8 @@ import speech_recognition as sr
 from queue import Queue
 
 class EllieEars(EllieBehavior):
-    def __init__(self):        
+    def __init__(self):  
+        super().__init__()      
         self._ellie = Inference()
         self._recognizer = sr.Recognizer()
         self._microphone = sr.Microphone()
@@ -18,21 +18,26 @@ class EllieEars(EllieBehavior):
         This will improve the recognition of the speech when working with the audio file.
         """
         with self._microphone as source:
+            self._recognizer.pause_threshold = 1
             self._recognizer.adjust_for_ambient_noise(source)
         self.reset()
         self._is_busy = False
-        super().__init__()
+
     
     def reset(self):
         self._current_response =""
         self._current_msg = ""
+
     def update(self):
         self.reset()
-        with self._microphone as source:
-            audio = self._recognizer.adjust_for_ambient_noise(source)
-            audio = self._recognizer.listen(source=source)
-            self._current_msg = self._recognizer.recognize_google(audio,language='de-DE')
-            self._current_response = self._response(self._current_msg)
+        try:
+            with self._microphone as source:
+                audio = self._recognizer.adjust_for_ambient_noise(source)
+                audio = self._recognizer.listen(source=source)
+                self._current_msg = self._recognizer.recognize_google(audio,language='de-DE')
+                self._current_response = self._response(self._current_msg)
+        except:
+            pass
     
     def get_response(self):
         return self._current_response
@@ -69,10 +74,9 @@ class EllieEars(EllieBehavior):
 if __name__=="__main__":
 
     e = EllieEars()
-    e.open()
     while True:
         e.update()    
-        if e.response is not "":  
-            print(e.response)
+        if e.get_response() != "":  
+            print(e.get_response())
         time.sleep(0.5)
 
