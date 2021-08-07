@@ -99,7 +99,7 @@ if __name__=="__main__":
     app = QApplication(sys.argv)
     monitor = QDesktopWidget().screenGeometry(1)
     demo = EyesBlinking()
-    demo2= OpenWebView()
+    #demo2= OpenWebView()
     app.exec_()
 
     
