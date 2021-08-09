@@ -12,7 +12,7 @@ import nltk
 from nltk.stem.lancaster import LancasterStemmer
 from tflearn.layers.core import activation
 stemmer = LancasterStemmer()
-#nltk.download('punkt')
+nltk.download('punkt')
 EPOCHS = 500
 warnings.filterwarnings("ignore")
 

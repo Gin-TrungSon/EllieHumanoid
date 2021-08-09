@@ -17,28 +17,30 @@ class Ellie:
 
     def __init__(self) -> None:
         self.ellie_ears = EllieEars()
-        self.ellie_eyes = EllieEyes()
+        #self.ellie_eyes = EllieEyes()
         self.ellie_voice = EllieVoice()
-        self.eyes_thread = Thread(target=self.__eyes_loop,daemon=True)
-        self.eyes_thread.start()
-        self.screen_thread = Thread(target=self.__screen_thread,daemon=True)
-        self.screen_thread.start()
+        #self.eyes_thread = Thread(target=self.__eyes_loop,daemon=True)
+        #self.eyes_thread.start()
+        #self.screen_thread = Thread(target=self.__screen_thread,daemon=True)
+        #self.screen_thread.start()
         #self.ellie_body = EllieBody()
         
         #self.intents = self.loadBehaviors()
         self.period = 1.0
-        try:
-            while True:
+        while True:
+            try:
+            
                 startLoop = time()
                 self.update()
                 # self.lateUpdate()
                 # duration = time()-startLoop
                 # if duration < self.period:
                 #     sleep(self.period - duration)
-        except KeyboardInterrupt:
-            self.ellie_eyes.on_exit()
-            self.eyes_thread.join()
-            self.screen_thread.join()
+            except KeyboardInterrupt:
+                #self.ellie_eyes.on_exit()
+                #self.eyes_thread.join()
+                #self.screen_thread.join()
+                break
 
     def update(self):
         self.p_ears = self.ellie_ears.update()

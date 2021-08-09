@@ -34,11 +34,12 @@ class EllieEyes(EllieBehavior):
         frame = self.stream.read()
         self._obj_frame, self._obj_boxes, self._obj_classes, self.scores = self.object_detection.inference(frame)
         self.face_frame, self._registeredPerson, self.centers = self.face_recogition.inference(frame)
-        if self.display:
+        if self.display :
             f = self.object_detection.draw_bbox( self.face_frame, self._obj_boxes, self._obj_classes, self.scores)
-            cv2.imshow("frame",f)
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                cv2.destroyAllWindows() 
+            if f.all() != None:
+                cv2.imshow("frame",f)
+                if cv2.waitKey(1) & 0xFF == ord('q'):
+                    cv2.destroyAllWindows() 
 
 
     def on_exit(self):

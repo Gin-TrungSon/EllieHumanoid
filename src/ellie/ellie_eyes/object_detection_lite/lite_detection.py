@@ -58,8 +58,11 @@ class Lite_Detector():
         self.float_model = (self.input_details[0]['dtype'] == np.float32)
 
     def inference(self, frame):
-        handled_frame = cv2.resize(frame, (self.width, self.height),
+        try:
+            handled_frame = cv2.resize(frame, (self.width, self.height),
                                    interpolation=cv2.INTER_AREA)
+        except:
+            return None, None, None, None
         input_data = np.expand_dims(handled_frame, axis=0)
 
         # Normalize if its a floating model
@@ -132,6 +135,8 @@ class Lite_Detector():
         stream.stop()
 
     def draw_bbox(self, frame, boxes, classes, scores):
+        if frame.all() == None:
+            return frame        
         for i in range(len(scores)):
             if scores[i] >= THRESHOLD and (classes[i]) != "???":
 

@@ -40,7 +40,10 @@ class FaceRecognition():
     def inference(self,frame):
 
         start = time.time()
-        frame_img = cv2.resize(frame, (0, 0), None, 0.25, 0.25)
+        try:
+            frame_img = cv2.resize(frame, (0, 0), None, 0.25, 0.25)
+        except:
+            return None, None,None
         frame_img = cv2.cvtColor(frame_img, cv2.COLOR_BGR2RGB)
 
         faces_location = factical_recognition.detect_face_locations(frame_img)

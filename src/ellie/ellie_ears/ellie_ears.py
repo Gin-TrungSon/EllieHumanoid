@@ -32,6 +32,7 @@ class EllieEars(EllieBehavior):
         self.reset()
         try:
             with self._microphone as source:
+                print("listening")
                 audio = self._recognizer.adjust_for_ambient_noise(source)
                 audio = self._recognizer.listen(source=source)
                 self._current_msg = self._recognizer.recognize_google(audio,language='de-DE')
