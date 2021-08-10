@@ -22,7 +22,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            "ellie_eyes = ellie_eyes.ellie_eyes:main",
+            "start = ellie_eyes.ellie_eyes:main",
         ],
     },
 )
