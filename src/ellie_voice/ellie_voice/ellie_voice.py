@@ -3,7 +3,7 @@ import rclpy
 from rclpy.node import Node
 from ellie_voice.NLP_tensorflow import Inference
 import speech_recognition as sr
-from std_msgs.msg import String
+from ellie_msgs.srv import String
 from gtts import gTTS
 import os
 import glob
@@ -32,6 +32,7 @@ class EllieVoice(Node):
             String, "ellie/listend", 1)
         self.response_publisher = self.create_publisher(
             String, "ellie/response", 1)
+        #self.srv = self.create_service(String, "speak", self.speak_callback)
 
         print("Prepare for listening ...")
         self.remove_existed_sounds()
@@ -49,6 +50,12 @@ class EllieVoice(Node):
             self._recognizer.adjust_for_ambient_noise(source)
         self.reset()
 
+    def speak_callback(self, request, response):
+        print(f"received : {request.request}")
+        response.response = request.request
+        self.speak(request.request)
+        return response
+        
     def remove_existed_sounds(self):
         filelist = glob.glob(os.path.join(DIR_TEMP, "*"))
         for f in filelist:
@@ -106,8 +113,9 @@ def main(args=None):
     ellie_voice = EllieVoice()
 
     while rclpy.ok():
+        
         ellie_voice.update()
-        # rclpy.spin_once(ellie_voice)
+        #rclpy.spin_once()
 
     ellie_voice.remove_existed_sounds()
     ellie_voice.destroy_node()
