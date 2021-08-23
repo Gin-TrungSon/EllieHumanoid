@@ -53,7 +53,7 @@ AVAILABLE_BAUDRATE = [9600, 57600, 115200,
 class MotorType(Enum):
     MX_106 = 320
     MX_64 = 310
-    MX_28 = 24
+    MX_28 = 29
     MX_12 = 28
     AX_12 = 12
     AX_18 = 18
@@ -63,14 +63,14 @@ class MotorType(Enum):
 
 
 position_range = {
-    MotorType.MX_106: (4096, 260.0),
-    MotorType.MX_64: (4096, 260.0),
-    MotorType.MX_28: (4096, 260.0),
-    MotorType.MX_12: (4096, 260.0),
+    MotorType.MX_106: (4096, 360.0),
+    MotorType.MX_64: (4096, 360.0),
+    MotorType.MX_28: (4096, 360.0),
+    MotorType.MX_12: (4096, 360.0),
     MotorType.AX_12: (1024, 300.0),
     MotorType.AX_18: (1024, 300.0),
     MotorType.RX_24: (1024, 300.0),
-    MotorType.RX_28: (41024, 300.0),
+    MotorType.RX_28: (1024, 300.0),
     MotorType.RX_64: (1024, 300.0),
 }
 torque_max = {  # in N.m
@@ -197,3 +197,16 @@ def pid_to_dxl(value, model):
     def truncate(x):
         return int(max(0, min(x, 254)))
     return [truncate(x * y) for x, y in zip(value, (250, 2.048, 8.0))]
+
+
+
+def clamp(value, min_value,max_value, id =None):
+        if value > max_value or value < min_value:
+            if id != None:
+                print(f"[Id: {id}] Value {value} is out of range [{min_value},{max_value}] ")
+            else:
+                print(f"Value {value} is out of range [{min_value},{max_value}] ")
+        return max(min(value, max_value), min_value)
+
+if __name__ == '__main__':
+    print(degree_to_dxl(50, MotorType.AX_12))
