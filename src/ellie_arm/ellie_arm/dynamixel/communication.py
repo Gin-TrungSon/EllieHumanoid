@@ -34,11 +34,12 @@ class DxlInterface:
             self.port, self.packetHandler, GOAL_POSITION, 2)
         self.groupSyncWriteVerlocity = GroupSyncWrite(
             self.port, self.packetHandler, MOVING_SPEED, 2)
-        self.groupSyncReadPosition = GroupSyncRead(
-            self.port, self.packetHandler, GOAL_POSITION, 2)            
-        self.groupSyncReadVerlocity = GroupSyncRead(
-            self.port, self.packetHandler, MOVING_SPEED, 2)
-
+        self.groupBulkReadPosition = GroupBulkRead(self.port, self.packetHandler)
+        self.groupBulkReadVelocity= GroupBulkRead(self.port, self.packetHandler)
+        for motor in self._motors.motors:
+            self.groupBulkReadPosition.addParam(motor.id,PRESENT_POSITION,2)
+            self.groupBulkReadVelocity.addParam(motor.id,PRESENT_SPEED,2)
+        
 
     def factory_reset(self, dxl_id):
         """
@@ -205,9 +206,13 @@ class DxlInterface:
     def read_data_sync(self):
         try:
             data = {}
+
             for motor in self._motors.motors:
-                position = self.present_position_degree(motor.id,motor.type) - motor.offset
+                position = self.present_position_degree(motor.id,motor.type) -motor.offset
+                #position = dxl_to_degree(self.groupBulkReadPosition.getData(motor.id,PRESENT_POSITION,2),motor.type) 
+                #velocity = dxl_to_speed(self.groupBulkReadVelocity.getData(motor.id,PRESENT_SPEED,2),motor.type)
                 velocity = self.present_speed(motor.id,motor.type)
+                #print(f"position {position} velocity {velocity} ")
                 data[motor.name] = [position, velocity]
             return data
         except AttributeError:

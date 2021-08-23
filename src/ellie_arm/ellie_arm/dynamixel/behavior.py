@@ -111,12 +111,13 @@ class Behavior():
             target=self._start, daemon=True)
         
         counter = 3
+        for motor in self._dxl_interface.registered_motors:
+            self._dxl_interface.disable_torque(motor.id)
         while counter>0:
             print(f"Start in {counter}")
             time.sleep(1)
             counter-=1
-        for motor in self._dxl_interface.registered_motors:
-            self._dxl_interface.disable_torque(motor.id)
+
         
         self.recorder.start()
 
@@ -131,10 +132,6 @@ class Behavior():
         self.execute()
 
     def execute(self):
-        time_ =0
-        # while time_ < self.duration * len(self._recorded_positions.keys()):
-        #     self._dxl_interface.execute_trajectories(self._stamped_positions[time_],self.duration)
-        #     time_+=self.duration
         self._dxl_interface.goto_position_sync(
             self.stamped_positions, self.duration)
 
@@ -146,7 +143,6 @@ class Behavior():
                 'framerate': self.frame_rate,
                 'positions': self._recorded_positions,
             }
-            print(d)
             json.dump(d, f, indent=4)
     def _start(self):
         self.stop = False
@@ -159,13 +155,14 @@ class Behavior():
                     break
             start = time.time()
             self._recorded_positions[time_stamped] = self._dxl_interface.read_data_sync()
-            time_stamped += (time.time()-start)
+            d = time.time() -start
+            if d < period:
+                time.sleep(period-d)
+                time_stamped+=period
+            else:
+                print(d)
+                raise  ValueError("record rate is so height !")  
             
-    
-    def _update(self, time_stamped):
-        p = self._dxl_interface.read_data_sync()
-        self._recorded_positions[str(time_stamped)] = p
-        print(p)
         
 
         

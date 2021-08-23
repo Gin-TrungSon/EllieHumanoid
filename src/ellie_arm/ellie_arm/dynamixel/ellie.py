@@ -1,4 +1,3 @@
-import time
 from typing import OrderedDict
 from ellie_arm.dynamixel.ellie_motors import EllieMotors
 from ellie_arm.dynamixel.hardwares import DxlAXRXMotor, DxlMXMotor
@@ -64,7 +63,7 @@ class Ellie():
     def execute_behavior(self,behavior_id):
         self.behaviors[behavior_id].execute()
 
-    def start_recorder(self, id, frequency = 50):
+    def start_recorder(self, id, frequency = 12):
         self.recording_behavior = Behavior(id,self.dxl_interface, frequency)
         self.recording_behavior.start_recorder()
     def stop_recorder(self):
