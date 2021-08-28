@@ -25,13 +25,22 @@ find_package(rosidl_default_generators REQUIRED)
 set(  msg_files
       "msg/DetectedInfo.msg"
       "msg/Position.msg"
+      "msg/Conversation.msg"
     )
 set(  srv_files
     "srv/String.srv"
   )
+set( action_files
+    "action/Behavior.action"
+    "action/Move.action"
+    "action/ChainPosition.action"
+    "action/JointPosition.action"
+    "action/ExecuteBehavior.action"
+)
 rosidl_generate_interfaces(${PROJECT_NAME}
   ${msg_files}
   ${srv_files}
+  ${action_files}
   ADD_LINTER_TESTS
 )
 
