@@ -1,9 +1,11 @@
+from ament_index_python.packages import get_package_share_directory
 import time
 import rclpy
 from rclpy.node import Node
 from ellie_voice.NLP_tensorflow import Inference
 import speech_recognition as sr
 from ellie_msgs.srv import String
+from ellie_msgs.msg import Conversation
 from gtts import gTTS
 import os
 import glob
@@ -15,8 +17,8 @@ from pydub import effects
 DIR_TEMP = os.path.join(os.path.dirname(__file__), "temp")
 class EllieVoice(Node):
     def __init__(self):
-
         super().__init__("ellie_ears")
+
         self.declare_parameter("pasue_threshold", 1.0)
         self.declare_parameter("speech_speed", 1.3)
         self.declare_parameter("minimum_energy_threshold", 300)
@@ -28,10 +30,7 @@ class EllieVoice(Node):
         self.energy_threshold = self.get_parameter(
             "minimum_energy_threshold").get_parameter_value().integer_value
 
-        self.listened_text_publisher = self.create_publisher(
-            String, "ellie/listend", 1)
-        self.response_publisher = self.create_publisher(
-            String, "ellie/response", 1)
+        self._listen_response = self.create_publisher(Conversation, 'ellie/communication', 1)
         #self.srv = self.create_service(String, "speak", self.speak_callback)
 
         print("Prepare for listening ...")
@@ -40,7 +39,7 @@ class EllieVoice(Node):
         self._ellie = Inference()
         self._recognizer = sr.Recognizer()
         self._microphone = sr.Microphone()
-
+       
         """
         This will improve the recognition of the speech when working with the audio file.
         """
@@ -58,6 +57,8 @@ class EllieVoice(Node):
         
     def remove_existed_sounds(self):
         filelist = glob.glob(os.path.join(DIR_TEMP, "*"))
+        if len(filelist) <1:
+            return
         for f in filelist:
             os.remove(f)
 
@@ -72,18 +73,17 @@ class EllieVoice(Node):
                 print("listening")
                 audio = self._recognizer.adjust_for_ambient_noise(source)
                 audio = self._recognizer.listen(source=source)
+                msg = Conversation()
                 self._current_msg = self._recognizer.recognize_google(
                     audio, language='de-DE')
                 if self._current_msg != "":
-                    msg = String()
-                    msg.data = f"Listened : {self._current_msg}"
-                    self.listened_text_publisher.publish(msg)
+                    msg.listen= self._current_msg
+
                 self._current_response = self._response(self._current_msg)
                 if self._current_response != "":
-                    msg = String()
-                    msg.data = f"Response : {self._current_response}"
-                    self.response_publisher.publish(msg)
+                    msg.response = self._current_response
                     self.speak(self._current_response)
+                self._listen_response.publish(msg)
         except sr.UnknownValueError:
             print("Oops! Didn't catch that")
         except sr.RequestError as e:
@@ -111,12 +111,12 @@ class EllieVoice(Node):
 def main(args=None):
     rclpy.init(args=args)
     ellie_voice = EllieVoice()
-
+    print("pass")
     while rclpy.ok():
         
         ellie_voice.update()
         #rclpy.spin_once()
-
+  
     ellie_voice.remove_existed_sounds()
     ellie_voice.destroy_node()
     rclpy.shutdown()

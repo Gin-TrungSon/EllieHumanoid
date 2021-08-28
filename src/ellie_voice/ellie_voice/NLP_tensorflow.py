@@ -6,7 +6,7 @@ import tflearn
 import random
 import os
 import numpy as np
-
+from ament_index_python.packages import get_package_share_directory
 import nltk
 from nltk.stem.lancaster import LancasterStemmer
 from tflearn.layers.core import activation
@@ -16,9 +16,9 @@ EPOCHS = 500
 warnings.filterwarnings("ignore")
 
 INTENTS_PATH = os.path.join(os.path.dirname(__file__), "intents/intents.json")
-WEIGHT_PATH = os.path.join(os.path.dirname(__file__), "weights/poppy.dts")
+WEIGHT_PATH = os.path.join(os.path.dirname(__file__),"weights/ellie.dts")
 IGNORE_WORDS = ["!", "?"]
-TRAINED_DATA_PATH = os.path.join(os.path.dirname(__file__), "data/data.txt")
+TRAINED_DATA_PATH = os.path.join(os.path.dirname(__file__),"data/data.txt")
 
 
 def training():

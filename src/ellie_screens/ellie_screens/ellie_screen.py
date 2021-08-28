@@ -93,7 +93,7 @@ class EyesBlinking (QDesktopWidget):
         else:
             while motionid == self.currentMotion:
                 motionid = random.choices(
-                    ["leftLooking", "smile", "blink", "rightLooking", "idle"], weights=[5, 3, 40, 5, 6], k=1)[0]
+                    ["leftLooking", "smile", "blink", "rightLooking", "idle"], weights=[5, 3, 40, 5, 30], k=1)[0]
         self.currentMotion = motionid
         self.motion.stop()
         self.motion.setFileName(self.motions[self.currentMotion])
