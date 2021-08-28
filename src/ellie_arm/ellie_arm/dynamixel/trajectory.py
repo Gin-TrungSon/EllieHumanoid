@@ -1,7 +1,6 @@
-from ellie_arm.dynamixel.sub_threading import ModifiedLoopThread
 import numpy as np
 import collections
-import time
+
 
 class MinimumJerkTrajectory(object):
     def __init__(self, initial, final, duration, init_vel=0.0, init_acc=0.0, final_vel=0.0, final_acc=0.0):
@@ -18,19 +17,22 @@ class MinimumJerkTrajectory(object):
 
         self.compute()
 
-    def compute(self):  # N'Guyen's magic
+    def compute(self):  
         a0 = self.initial
         a1 = self.init_vel
         a2 = self.init_acc / 2.0
-        d = lambda x: self.duration ** x
+        def d(x): return self.duration ** x
 
-        A = np.array([[d(3), d(4), d(5)], [3 * d(2), 4 * d(3), 5 * d(4)], [6 * d(1), 12 * d(2), 20 * d(3)]])
-        B = np.array([self.final - a0 - (a1 * d(1)) - (a2 * d(2)), self.final_vel - a1 - (2 * a2 * d(1)), self.final_acc - (2 * a2)])
+        A = np.array([[d(3), d(4), d(5)], [3 * d(2), 4 * d(3),
+                     5 * d(4)], [6 * d(1), 12 * d(2), 20 * d(3)]])
+        B = np.array([self.final - a0 - (a1 * d(1)) - (a2 * d(2)),
+                     self.final_vel - a1 - (2 * a2 * d(1)), self.final_acc - (2 * a2)])
         X = np.linalg.solve(A, B)
 
         self.other_gen = None
 
-        self._mylambda = lambda x: a0 + a1 * x + a2 * x ** 2 + X[0] * x ** 3 + X[1] * x ** 4 + X[2] * x ** 5
+        self._mylambda = lambda x: a0 + a1 * x + a2 * x ** 2 + \
+            X[0] * x ** 3 + X[1] * x ** 4 + X[2] * x ** 5
 
         self._generators = [self._mylambda]
 
@@ -54,31 +56,6 @@ class MinimumJerkTrajectory(object):
 
     def get_generator(self):
         return lambda x: np.piecewise(x, self.domain(x), [self._generators[j] for j in range(len(self._generators))] + [self.finals[-1]])
-
-class MinJerkTrajectory(ModifiedLoopThread):
-    def __init__(self, motor, position, duration,frequency):
-        super().__init__(frequency)
-
-        self.motor = motor
-        self.goal = position
-        self.duration = duration
-
-    def setup(self):
-        """ Setup method call just before the run. """
-        if self.duration < np.finfo(float).eps:             #1.1920929e-07
-            self.motor.goal_position = self.goal
-            self.stop()
-        else:
-            self.trajectory = MinimumJerkTrajectory(self.motor.present_position, self.goal, self.duration).get_generator()
-        self.t0 = time.time()
-    @property
-    def elapsed_time(self):
-        return time.time() - self.t0
-    def update(self):
-        if np.finfo(float).eps < self.duration >self.elapsed_time:
-            self.motor.goal_position = self.trajectory(self.elapsed_time)
-        else:
-            self.stop(wait=False)
 
 
 class SinusTrajectory(object):
@@ -100,15 +77,18 @@ class SinusTrajectory(object):
         a0 = self.initial
         a1 = self.init_vel
         a2 = self.init_acc / 2.0
-        d = lambda x: self.duration ** x
+        def d(x): return self.duration ** x
 
-        A = np.array([[d(3), d(4), d(5)], [3 * d(2), 4 * d(3), 5 * d(4)], [6 * d(1), 12 * d(2), 20 * d(3)]])
-        B = np.array([self.final - a0 - (a1 * d(1)) - (a2 * d(2)), self.final_vel - a1 - (2 * a2 * d(1)), self.final_acc - (2 * a2)])
+        A = np.array([[d(3), d(4), d(5)], [3 * d(2), 4 * d(3),
+                     5 * d(4)], [6 * d(1), 12 * d(2), 20 * d(3)]])
+        B = np.array([self.final - a0 - (a1 * d(1)) - (a2 * d(2)),
+                     self.final_vel - a1 - (2 * a2 * d(1)), self.final_acc - (2 * a2)])
         X = np.linalg.solve(A, B)
 
         self.other_gen = None
 
-        self._mylambda = lambda x: a0 + a1 * x + a2 * x ** 2 + X[0] * x ** 3 + X[1] * x ** 4 + X[2] * x ** 5
+        self._mylambda = lambda x: a0 + a1 * x + a2 * x ** 2 + \
+            X[0] * x ** 3 + X[1] * x ** 4 + X[2] * x ** 5
 
         self._generators = [self._mylambda]
 
@@ -132,28 +112,3 @@ class SinusTrajectory(object):
 
     def get_generator(self):
         return lambda x: np.piecewise(x, self.domain(x), [self._generators[j] for j in range(len(self._generators))] + [self.finals[-1]])
-
-class SinusTrajectory(ModifiedLoopThread):
-    def __init__(self, motor, position, duration,frequency):
-        super().__init__(frequency)
-
-        self.motor = motor
-        self.goal = position
-        self.duration = duration
-
-    def setup(self):
-        """ Setup method call just before the run. """
-        if self.duration < np.finfo(float).eps:             #1.1920929e-07
-            self.motor.goal_position = self.goal
-            self.stop()
-        else:
-            self.trajectory = MinimumJerkTrajectory(self.motor.present_position, self.goal, self.duration).get_generator()
-        self.t0 = time.time()
-    @property
-    def elapsed_time(self):
-        return time.time() - self.t0
-    def update(self):
-        if np.finfo(float).eps < self.duration >self.elapsed_time:
-            self.motor.goal_position = self.trajectory(self.elapsed_time)
-        else:
-            self.stop(wait=False)

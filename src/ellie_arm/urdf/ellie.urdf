@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<robot name="Poppy_Torso">
+<robot name="Ellie">
 	<link name="base">
 		<inertial>
 			<origin xyz="-9.74926801495556E-06 0.0245809270022031 -0.0126310576435619" rpy="0 0 0"></origin>
@@ -9,7 +9,7 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 0 0"></origin>
 			<geometry>
-				<mesh filename="package://meshes/base_visual.STL"></mesh>
+				<mesh filename="package://urdf/meshes/base_visual.STL"></mesh>
 			</geometry>
 			<material name="">
 				<color rgba="0.9 0.9 0.9 1.0"></color>
@@ -18,7 +18,7 @@
 		<collision>
 			<origin xyz="0 0 0" rpy="0 0 0"></origin>
 			<geometry>
-				<mesh filename="package://meshes/base_respondable.STL"></mesh>
+				<mesh filename="package://urdf/meshes/base_respondable.STL"></mesh>
 			</geometry>
 		</collision>
 	</link>
@@ -31,7 +31,7 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 0 0"></origin>
 			<geometry>
-				<mesh filename="package://meshes/spine_visual.STL"></mesh>
+				<mesh filename="package://urdf/meshes/spine_visual.STL"></mesh>
 			</geometry>
 			<material name="">
 				<color rgba="0.9 0.9 0.9 1.0"></color>
@@ -40,7 +40,7 @@
 		<collision>
 			<origin xyz="0 0 0" rpy="0 0 0"></origin>
 			<geometry>
-				<mesh filename="package://meshes/spine_respondable.STL"></mesh>
+				<mesh filename="package://urdf/meshes/spine_respondable.STL"></mesh>
 			</geometry>
 		</collision>
 		<mass>0.09264</mass>
@@ -54,7 +54,7 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 0 0"></origin>
 			<geometry>
-				<mesh filename="package://meshes/bust_motors_visual.STL"></mesh>
+				<mesh filename="package://urdf/meshes/bust_motors_visual.STL"></mesh>
 			</geometry>
 			<material name="">
 				<color rgba="0.9 0.9 0.9 1.0"></color>
@@ -63,7 +63,7 @@
 		<collision>
 			<origin xyz="0 0 0" rpy="0 0 0"></origin>
 			<geometry>
-				<mesh filename="package://meshes/bust_motors_respondable.STL"></mesh>
+				<mesh filename="package://urdf/meshes/bust_motors_respondable.STL"></mesh>
 			</geometry>
 		</collision>
 		<mass>0.15889</mass>
@@ -77,7 +77,7 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 0 0"></origin>
 			<geometry>
-				<mesh filename="package://meshes/chest_visual.STL"></mesh>
+				<mesh filename="package://urdf/meshes/chest_visual.STL"></mesh>
 			</geometry>
 			<material name="">
 				<color rgba="0.9 0.9 0.9 1.0"></color>
@@ -86,7 +86,7 @@
 		<collision>
 			<origin xyz="0 0 0" rpy="0 0 0"></origin>
 			<geometry>
-				<mesh filename="package://meshes/chest_respondable.STL"></mesh>
+				<mesh filename="package://urdf/meshes/chest_respondable.STL"></mesh>
 			</geometry>
 		</collision>
 		<mass>0.27528</mass>
@@ -100,7 +100,7 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 0 0"></origin>
 			<geometry>
-				<mesh filename="package://meshes/neck_visual.STL"></mesh>
+				<mesh filename="package://urdf/meshes/neck_visual.STL"></mesh>
 			</geometry>
 			<material name="">
 				<color rgba="0.9 0.9 0.9 1.0"></color>
@@ -109,7 +109,7 @@
 		<collision>
 			<origin xyz="0 0 0" rpy="0 0 0"></origin>
 			<geometry>
-				<mesh filename="package://meshes/neck_respondable.STL"></mesh>
+				<mesh filename="package://urdf/meshes/neck_respondable.STL"></mesh>
 			</geometry>
 		</collision>
 		<mass>0.00588</mass>
@@ -123,7 +123,7 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 0 0"></origin>
 			<geometry>
-				<mesh filename="package://meshes/head_visual.STL"></mesh>
+				<mesh filename="package://urdf/meshes/head_visual.STL"></mesh>
 			</geometry>
 			<material name="">
 				<color rgba="0.9 0.9 0.9 1.0"></color>
@@ -132,7 +132,7 @@
 		<collision>
 			<origin xyz="0 0 0" rpy="0 0 0"></origin>
 			<geometry>
-				<mesh filename="package://meshes/head_respondable.STL"></mesh>
+				<mesh filename="package://urdf/meshes/head_respondable.STL"></mesh>
 			</geometry>
 		</collision>
 		<mass>0.2126</mass>
@@ -146,7 +146,7 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 0 0"></origin>
 			<geometry>
-				<mesh filename="package://meshes/l_shoulder_visual.STL"></mesh>
+				<mesh filename="package://urdf/meshes/l_shoulder_visual.STL"></mesh>
 			</geometry>
 			<material name="">
 				<color rgba="0.9 0.9 0.9 1.0"></color>
@@ -155,7 +155,7 @@
 		<collision>
 			<origin xyz="0 0 0" rpy="0 0 0"></origin>
 			<geometry>
-				<mesh filename="package://meshes/l_shoulder_respondable.STL"></mesh>
+				<mesh filename="package://urdf/meshes/l_shoulder_respondable.STL"></mesh>
 			</geometry>
 		</collision>
 		<mass>0.00838</mass>
@@ -169,7 +169,7 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 0 0"></origin>
 			<geometry>
-				<mesh filename="package://meshes/l_shoulder_motor_visual.STL"></mesh>
+				<mesh filename="package://urdf/meshes/l_shoulder_motor_visual.STL"></mesh>
 			</geometry>
 			<material name="">
 				<color rgba="0.9 0.9 0.9 1.0"></color>
@@ -178,7 +178,7 @@
 		<collision>
 			<origin xyz="0 0 0" rpy="0 0 0"></origin>
 			<geometry>
-				<mesh filename="package://meshes/l_shoulder_motor_respondable.STL"></mesh>
+				<mesh filename="package://urdf/meshes/l_shoulder_motor_respondable.STL"></mesh>
 			</geometry>
 		</collision>
 		<mass>0.08288</mass>
@@ -192,7 +192,7 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 0 0"></origin>
 			<geometry>
-				<mesh filename="package://meshes/l_upper_arm_visual.STL"></mesh>
+				<mesh filename="package://urdf/meshes/l_upper_arm_visual.STL"></mesh>
 			</geometry>
 			<material name="">
 				<color rgba="0.9 0.9 0.9 1.0"></color>
@@ -201,7 +201,7 @@
 		<collision>
 			<origin xyz="0 0 0" rpy="0 0 0"></origin>
 			<geometry>
-				<mesh filename="package://meshes/l_upper_arm_respondable.STL"></mesh>
+				<mesh filename="package://urdf/meshes/l_upper_arm_respondable.STL"></mesh>
 			</geometry>
 		</collision>
 		<mass>0.16814</mass>
@@ -215,7 +215,7 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 0 0"></origin>
 			<geometry>
-				<mesh filename="package://meshes/l_forearm_visual.STL"></mesh>
+				<mesh filename="package://urdf/meshes/l_forearm_visual.STL"></mesh>
 			</geometry>
 			<material name="">
 				<color rgba="0.9 0.9 0.9 1.0"></color>
@@ -224,7 +224,7 @@
 		<collision>
 			<origin xyz="0 0 0" rpy="0 0 0"></origin>
 			<geometry>
-				<mesh filename="package://meshes/l_forearm_respondable.STL"></mesh>
+				<mesh filename="package://urdf/meshes/l_forearm_respondable.STL"></mesh>
 			</geometry>
 		</collision>
 		<mass>0.04863</mass>
@@ -238,7 +238,7 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 0 0"></origin>
 			<geometry>
-				<mesh filename="package://meshes/r_shoulder_visual.STL"></mesh>
+				<mesh filename="package://urdf/meshes/r_shoulder_visual.STL"></mesh>
 			</geometry>
 			<material name="">
 				<color rgba="0.9 0.9 0.9 1.0"></color>
@@ -247,7 +247,7 @@
 		<collision>
 			<origin xyz="0 0 0" rpy="0 0 0"></origin>
 			<geometry>
-				<mesh filename="package://meshes/r_shoulder_respondable.STL"></mesh>
+				<mesh filename="package://urdf/meshes/r_shoulder_respondable.STL"></mesh>
 			</geometry>
 		</collision>
 		<mass>0.00838</mass>
@@ -261,7 +261,7 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 0 0"></origin>
 			<geometry>
-				<mesh filename="package://meshes/r_shoulder_motor_visual.STL"></mesh>
+				<mesh filename="package://urdf/meshes/r_shoulder_motor_visual.STL"></mesh>
 			</geometry>
 			<material name="">
 				<color rgba="0.9 0.9 0.9 1.0"></color>
@@ -270,7 +270,7 @@
 		<collision>
 			<origin xyz="0 0 0" rpy="0 0 0"></origin>
 			<geometry>
-				<mesh filename="package://meshes/r_shoulder_motor_respondable.STL"></mesh>
+				<mesh filename="package://urdf/meshes/r_shoulder_motor_respondable.STL"></mesh>
 			</geometry>
 		</collision>
 		<mass>0.08288</mass>
@@ -284,7 +284,7 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 0 0"></origin>
 			<geometry>
-				<mesh filename="package://meshes/r_upper_arm_visual.STL"></mesh>
+				<mesh filename="package://urdf/meshes/r_upper_arm_visual.STL"></mesh>
 			</geometry>
 			<material name="">
 				<color rgba="0.9 0.9 0.9 1.0"></color>
@@ -293,7 +293,7 @@
 		<collision>
 			<origin xyz="0 0 0" rpy="0 0 0"></origin>
 			<geometry>
-				<mesh filename="package://meshes/r_upper_arm_respondable.STL"></mesh>
+				<mesh filename="package://urdf/meshes/r_upper_arm_respondable.STL"></mesh>
 			</geometry>
 		</collision>
 		<mass>0.16814</mass>
@@ -307,7 +307,7 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 0 0"></origin>
 			<geometry>
-				<mesh filename="package://meshes/r_forearm_visual.STL"></mesh>
+				<mesh filename="package://urdf/meshes/r_forearm_visual.STL"></mesh>
 			</geometry>
 			<material name="">
 				<color rgba="0.9 0.9 0.9 1.0"></color>
@@ -316,7 +316,7 @@
 		<collision>
 			<origin xyz="0 0 0" rpy="0 0 0"></origin>
 			<geometry>
-				<mesh filename="package://meshes/r_forearm_respondable.STL"></mesh>
+				<mesh filename="package://urdf/meshes/r_forearm_respondable.STL"></mesh>
 			</geometry>
 		</collision>
 		<mass>0.04863</mass>

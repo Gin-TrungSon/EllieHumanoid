@@ -17,7 +17,7 @@ class DxlInterface:
     def get_used_ports(cls):
         return list(cls.__used_ports)
 
-    def __init__(self,motors, port='/dev/ttyUSB0', baudrate=1000000, time_out=0.05):
+    def __init__(self, motors, port='/dev/ttyUSB0', baudrate=1000000, time_out=0.05):
         self._motors = motors
         self.open(port, baudrate, time_out)
 
@@ -34,19 +34,20 @@ class DxlInterface:
             self.port, self.packetHandler, GOAL_POSITION, 2)
         self.groupSyncWriteVerlocity = GroupSyncWrite(
             self.port, self.packetHandler, MOVING_SPEED, 2)
-        self.groupBulkReadPosition = GroupBulkRead(self.port, self.packetHandler)
-        self.groupBulkReadVelocity= GroupBulkRead(self.port, self.packetHandler)
+        self.groupBulkReadPosition = GroupBulkRead(
+            self.port, self.packetHandler)
+        self.groupBulkReadVelocity = GroupBulkRead(
+            self.port, self.packetHandler)
         for motor in self._motors.motors:
-            self.groupBulkReadPosition.addParam(motor.id,PRESENT_POSITION,2)
-            self.groupBulkReadVelocity.addParam(motor.id,PRESENT_SPEED,2)
-        
+            self.groupBulkReadPosition.addParam(motor.id, PRESENT_POSITION, 2)
+            self.groupBulkReadVelocity.addParam(motor.id, PRESENT_SPEED, 2)
 
     def factory_reset(self, dxl_id):
         """
         resets all settings of Dynamixel to default values .incl ID, Baudrate
         """
         self.packetHandler.factoryReset(self.port, dxl_id)
-    
+
     @property
     def registered_motors(self):
         return self._motors.motors
@@ -118,7 +119,7 @@ class DxlInterface:
         dxl_value = clamp(value,
                           motor.angle_limit[0], motor.angle_limit[1], dxl_id)
         result, error = self.packetHandler.write2ByteTxRx(
-            self.port, dxl_id, GOAL_POSITION, degree_to_dxl(dxl_value,motor.type))
+            self.port, dxl_id, GOAL_POSITION, degree_to_dxl(dxl_value, motor.type))
         if result != COMM_SUCCESS:
             print("%s" % self.packetHandler.getTxRxResult(result))
         elif error != 0:
@@ -133,7 +134,6 @@ class DxlInterface:
             print("%s" % self.packetHandler.getTxRxResult(result))
         elif error != 0:
             print("%s" % self.packetHandler.getRxPacketError(error))
-
 
     def goto_position(self, dxl_id, position, duration):
         model_type = self._motors.get_modelType(dxl_id)
@@ -152,6 +152,18 @@ class DxlInterface:
                 dt = time.time()-start
                 time_ += dt
 
+    def goto_position_group(self, duration, ids,  positions, velocities=None):
+        data = {}
+        if velocities == None:
+            for i, p in zip(ids, positions):
+                motor = self._motors.get_motor(i)
+                data[motor.name] = [p, 0]
+        else:
+            for i, p, v in zip(ids, positions, velocities):
+                motor = self._motors.get_motor(i)
+                data[motor.name] = [p, v]
+        self.goto_position_sync(data, duration)
+
     def goto_position_sync(self, positions, duration):
         time_ = 0
         self.execute_trajectories(positions[time_], 2)
@@ -161,9 +173,9 @@ class DxlInterface:
             item = positions[time_]
             self._goto_position_sync(item)
             dt = time.time()-start
-            if (dt < duration):
-                time.sleep(duration-dt)
-            time_ += duration
+            # if (dt < duration):
+            #     time.sleep(duration-dt)
+            time_ += dt
 
             #input('press to continue')
     def _goto_position_sync(self, item, max_speed=-1):
@@ -185,7 +197,7 @@ class DxlInterface:
                     f'id {motor.id} verlocity {velocity} goal {goal_position} velocity_dxl : {speed_to_dxl(velocity,motor.type)}  goal_dxl : {degree_to_dxl(goal_position,motor.type)}')
 
                 goal_position = clamp(
-                    goal_position + motor.offset , motor.angle_limit[0], motor.angle_limit[1])
+                    goal_position + motor.offset, motor.angle_limit[0], motor.angle_limit[1])
 
                 self.groupSyncWriteVerlocity.addParam(
                     motor.id, speed_to_dxl(velocity, motor.type).to_bytes(2, 'little'))
@@ -208,41 +220,45 @@ class DxlInterface:
             data = {}
 
             for motor in self._motors.motors:
-                position = self.present_position_degree(motor.id,motor.type) -motor.offset
-                #position = dxl_to_degree(self.groupBulkReadPosition.getData(motor.id,PRESENT_POSITION,2),motor.type) 
+                position = self.present_position_degree(
+                    motor.id, motor.type)-motor.offset
+                #position = dxl_to_degree(self.groupBulkReadPosition.getData(motor.id,PRESENT_POSITION,2),motor.type)
                 #velocity = dxl_to_speed(self.groupBulkReadVelocity.getData(motor.id,PRESENT_SPEED,2),motor.type)
-                velocity = self.present_speed(motor.id,motor.type)
+                velocity = self.present_speed(motor.id, motor.type)
                 #print(f"position {position} velocity {velocity} ")
                 data[motor.name] = [position, velocity]
             return data
         except AttributeError:
             raise ValueError("motors are not registed yet !")
-        
-    def calculate_trajectories(self,data, old_positions,start_time,period):
+
+    def record_trajectories(self, period, start_time, old_positions, data):
         trajectories = {}
         motor_names = []
+        velocities = []
         start = time.time()
         for name, value in old_positions.items():
             motor_names.append(name)
             motor = self._motors.get_attribute(name)
-            goal_position = value[0]
-            goal_position = clamp(
-                goal_position + motor.offset ,  motor.angle_limit[0], motor.angle_limit[1])
-            trajectories[name] = MinimumJerkTrajectory(dxl_to_degree(self.present_position(
-                motor.id), motor.type), goal_position, period).get_generator()
+            init_position = value[0]
+            init_position = clamp(
+                init_position,  motor.angle_limit[0], motor.angle_limit[1], motor.id)
+            trajectories[name] = MinimumJerkTrajectory(init_position, self.present_position_degree(
+                motor.id, motor.type) - motor.offset,  period).get_generator()
+            velocities.append(self.present_speed(motor.id, motor.type))
         time_ = period
         duration = time.time()-start
         while True:
-            pos ={}
-            for name in motor_names:
-                pos[name] = [float(trajectories[name](start_time+ time_))-self._motors.get_offset(name),0]
-            data[str(start_time+ time_)] = pos
-            if time_+ period > duration:
+            pos = {}
+            for name, vel in zip(motor_names, velocities):
+                pos[name] = [float(trajectories[name](time_)) -
+                             self._motors.get_motor_by_name(name).offset, vel]
+            data[str(start_time + time_)] = pos
+            if time_ + period > duration:
+                old_positions = pos
                 start_time = time_
-                return pos
             else:
                 time_ += period
-        
+
     def execute_trajectories(self, positions, duration):
         trajectories = {}
         motor_names = []
@@ -251,7 +267,7 @@ class DxlInterface:
             motor = self._motors.get_attribute(name)
             goal_position = value[0]
             goal_position = clamp(
-                goal_position + motor.offset ,  motor.angle_limit[0], motor.angle_limit[1])
+                goal_position + motor.offset,  motor.angle_limit[0], motor.angle_limit[1])
             trajectories[name] = MinimumJerkTrajectory(dxl_to_degree(self.present_position(
                 motor.id), motor.type), goal_position, duration).get_generator()
         time_ = 0
