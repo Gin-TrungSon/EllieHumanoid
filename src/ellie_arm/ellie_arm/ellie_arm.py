@@ -32,6 +32,7 @@ class Ros2Interface(Node):
         self._save_recorded_file= self.create_service(String,"save", self.save)
         self._replay = self.create_service(String,"replay",self.replay)
         self._resume = self.create_service(String, "resume", self.resume)
+        self._execute_behavior_srv = self.create_service(String,"execute_behavior",self.execute_behavior_srv)
 
     def start_recording(self, request, response):
         self.ellie_arm.start_recorder(str(request.request))
@@ -66,6 +67,17 @@ class Ros2Interface(Node):
         response.response = "Continute to recording ..."
         return response
 
+    def execute_behavior_srv(self,request, response):
+        id = request.request
+        if id in self.ellie_arm.get_attached_behaviors():
+            try :
+                self.get_logger().info(f"Executing behavior {id} ...")
+                self.ellie_arm.execute_behavior(id)
+                response.response= f"Executed behavior {id}"
+            except SystemError as e:
+                response.response = e.__str__()
+        return response
+
     def goto_position_callback(self, goal_handle):
         chain_id = goal_handle.request.chain_id
         position = goal_handle.request.position
@@ -82,6 +94,7 @@ class Ros2Interface(Node):
             result = ChainPosition.Result()
             result.result = f"chain_id should be 0 (left) or 1 (right) "
             return result
+            
     def goto_joint_position_callback(self, goal_handle):
         id = goal_handle.request.id
         position = goal_handle.request.position
@@ -97,6 +110,8 @@ class Ros2Interface(Node):
             result = JointPosition.Result()
             result.result = f"ID {id} not found"
             return result
+    
+
     def execute_behavior_callback(self, goal_handle):
         id = goal_handle.request.name
         if id not in self.ellie_arm.get_attached_behaviors():
