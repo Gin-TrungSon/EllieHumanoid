@@ -1,0 +1,15 @@
+{
+    "ladygaga":
+    {
+        "behavior": ["behave_hello"],
+        "eyes_animation" : ["smile"],
+        "speak" :["Hallo Ladygaga, Schön dich zu sehen"]
+    },
+    "emmaroberts":
+    {
+        "behavior": ["behave_dabhard"],
+        "eyes_animation" : ["angry"],
+        "speak" :["Hi Emma, du bist sehr schön"]
+    }
+
+}

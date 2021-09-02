@@ -9,6 +9,10 @@
 
   <exec_depend>rclpy</exec_depend>
   <exec_depend>ellie_msgs</exec_depend>
+  <exec_depend>ellie_arm</exec_depend>
+  <exec_depend>ellie_eyes</exec_depend>
+  <exec_depend>ellie_voice</exec_depend>
+  <exec_depend>ellie_screens</exec_depend>
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
   <test_depend>ament_pep257</test_depend>
