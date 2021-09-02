@@ -1,6 +1,8 @@
 from ament_index_python.packages import get_package_share_directory
 import time
+from threading import Thread
 import rclpy
+from rclpy.action.server import ActionServer
 from rclpy.node import Node
 from ellie_voice.NLP_tensorflow import Inference
 import speech_recognition as sr
@@ -15,6 +17,8 @@ from pydub.playback import play
 from pydub import effects
 
 DIR_TEMP = os.path.join(os.path.dirname(__file__), "temp")
+
+
 class EllieVoice(Node):
     def __init__(self):
         super().__init__("ellie_ears")
@@ -30,8 +34,9 @@ class EllieVoice(Node):
         self.energy_threshold = self.get_parameter(
             "minimum_energy_threshold").get_parameter_value().integer_value
 
-        self._listen_response = self.create_publisher(Conversation, 'ellie/communication', 1)
-        #self.srv = self.create_service(String, "speak", self.speak_callback)
+        self._listen_response = self.create_publisher(
+            Conversation, 'ellie/communication', 1)
+        self._speak = self.create_service(String, "speak", self.speak_callback)
 
         print("Prepare for listening ...")
         self.remove_existed_sounds()
@@ -39,7 +44,7 @@ class EllieVoice(Node):
         self._ellie = Inference()
         self._recognizer = sr.Recognizer()
         self._microphone = sr.Microphone()
-       
+
         """
         This will improve the recognition of the speech when working with the audio file.
         """
@@ -54,10 +59,10 @@ class EllieVoice(Node):
         response.response = request.request
         self.speak(request.request)
         return response
-        
+
     def remove_existed_sounds(self):
         filelist = glob.glob(os.path.join(DIR_TEMP, "*"))
-        if len(filelist) <1:
+        if len(filelist) < 1:
             return
         for f in filelist:
             os.remove(f)
@@ -77,7 +82,7 @@ class EllieVoice(Node):
                 self._current_msg = self._recognizer.recognize_google(
                     audio, language='de-DE')
                 if self._current_msg != "":
-                    msg.listen= self._current_msg
+                    msg.listen = self._current_msg
 
                 self._current_response = self._response(self._current_msg)
                 if self._current_response != "":
@@ -97,7 +102,7 @@ class EllieVoice(Node):
 
     def speak(self, text):
         tts = gTTS(text, lang="de", slow=False)
-        file_name = os.path.join(DIR_TEMP,f"{format(time.time())}.mp3")
+        file_name = os.path.join(DIR_TEMP, f"{format(time.time())}.mp3")
         tts.save(file_name)
         audio = AudioSegment.from_mp3(file_name)
         audio = effects.speedup(audio, self.speech_speed)
@@ -112,13 +117,17 @@ def main(args=None):
     rclpy.init(args=args)
     ellie_voice = EllieVoice()
     print("pass")
+    thread_ = Thread(
+        target=ros_shutdown, args=(ellie_voice,), daemon=True)
+    thread_.start()
     while rclpy.ok():
-        
         ellie_voice.update()
-        #rclpy.spin_once()
-  
     ellie_voice.remove_existed_sounds()
-    ellie_voice.destroy_node()
+
+def ros_shutdown(node):
+    print("ros_spins")
+    rclpy.spin(node)
+    node.destroy_node()
     rclpy.shutdown()
 
 
