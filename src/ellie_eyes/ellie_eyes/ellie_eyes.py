@@ -43,13 +43,13 @@ class EllieEyes(Node):
 
         self.bridge = CvBridge()
         self.original_img_publisher = self.create_publisher(
-            CompressedImage, "ellie/original_image", 1)
+            CompressedImage, "original_image", 1)
         self.handled_img_publisher = self.create_publisher(
-            CompressedImage, "ellie/handled_image", 1)
+            CompressedImage, "handled_image", 1)
         self.recognized_person_publisher = self.create_publisher(
-            DetectedInfo, "ellie/recognized_person", 1)
+            DetectedInfo, "recognized_person", 1)
         self.detected_objects_publisher = self.create_publisher(
-            DetectedInfo, "ellie/detected_objects", 1)
+            DetectedInfo, "detected_objects", 1)
 
         self.face_recogition = FaceRecognition()
         self.object_detection = Lite_Detector()
@@ -105,13 +105,13 @@ class EllieEyes(Node):
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     cv2.destroyAllWindows()
 
-    def generate_msg(sefl, centers, classes):
+    def generate_msg(self, centers, classes):
         msg = DetectedInfo()
         for i in range(len(centers)):
             msg.names.append(classes[i])
             position = Position() 
-            position.x = centers[i][0]
-            position.y = centers[i][1]
+            position.x = centers[i][0]/self.resolution[0] -0.5
+            position.y = 0.5-centers[i][1]/self.resolution[1] 
             msg.positions.append(position)
         print(msg)
         return msg
