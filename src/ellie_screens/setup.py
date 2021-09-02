@@ -20,7 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            "start = ellie_screens.ellie_screen:main"
+            "start_head = ellie_screens.ellie_head_monitor:main",
+            "start_brust = ellie_screens.ellie_brust_monitor:main"
         ],
     },
 )
