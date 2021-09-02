@@ -36,6 +36,7 @@ set( action_files
     "action/ChainPosition.action"
     "action/JointPosition.action"
     "action/ExecuteBehavior.action"
+    "action/String.action"
 )
 rosidl_generate_interfaces(${PROJECT_NAME}
   ${msg_files}
