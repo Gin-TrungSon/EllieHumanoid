@@ -1,3 +1,9 @@
+# Copyright 2021 by Dong Trung Son, Nueremberg University.
+# Email: trungsondo68839@th-nuernberg.de
+# All rights reserved.
+# This file is part of the Ellie-Project,
+# and is released under the "MIT License Agreement". Please see the LICENSE
+# file that should have been included as part of this package.
 
 import sys
 sys.path.append("")
@@ -11,8 +17,6 @@ from ellie_eyes.face_recognition.factical_face_rec import FaceRecognition
 from time import sleep
 from cv_bridge import CvBridge
 from rcl_interfaces.msg import ParameterDescriptor
-from rcl_interfaces.msg import ParameterType
-from rclpy.exceptions import ParameterNotDeclaredException
 from rclpy.node import Node
 import rclpy
 from ellie_msgs.msg import DetectedInfo, Position

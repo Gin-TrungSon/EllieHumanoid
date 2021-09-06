@@ -1,23 +1,35 @@
-import sys
-sys.path.append("")
-import  ellie_eyes.face_recognition.factical_recognition as factical_recognition
-from  ellie_eyes.ellie_eyes_utils import Stream
-import cv2.cv2 as cv2
-import numpy as np
-import time
+# Copyright 2021 by Dong Trung Son, Nueremberg University.
+# Email: trungsondo68839@th-nuernberg.de
+# All rights reserved.
+# This file is part of the Ellie-Project,
+# and is released under the "MIT License Agreement". Please see the LICENSE
+# file that should have been included as part of this package.
+
 
 import os
+import time
+import numpy as np
+import sys
+sys.path.append("")
+import cv2.cv2 as cv2
+from ellie_eyes.ellie_eyes_utils import Stream
+import ellie_eyes.face_recognition.factical_recognition as factical_recognition
 
 
-DATA_PATH = os.path.join(os.path.dirname(__file__),"data")
+#Path to encoded face data
+DATA_PATH = os.path.join(os.path.dirname(__file__), "data")
 faces, names = factical_recognition.load_images(DATA_PATH)
-processing = False
+
+
 class FaceRecognition():
 
     def __init__(self):
         pass
 
     def detec_from_cam(self):
+        """
+        detect from camera : Only for testing !
+        """
         # take video frames
         stream = Stream().start()
 
@@ -25,7 +37,7 @@ class FaceRecognition():
             try:
                 frame = stream.get_frame()
                 # read a fream
-                frame, _ ,_ = self.inference(frame)
+                frame, _, _ = self.inference(frame)
 
                 # show out
                 cv2.imshow('Face Recognition', frame)
@@ -37,21 +49,42 @@ class FaceRecognition():
         cv2.destroyAllWindows()
         stream.stop()
 
-    def inference(self,frame):
+    def inference(self, frame):
+        """
+        Face recognition
+        Parameters
+        ----------
+        frame: image frame 
 
+        Returns
+        -------
+        img:
+            handled frame
+        list:
+            a list of detected faces
+        list:
+            a list of center positions
+        """
         start = time.time()
+        # try to resize the image
         try:
             frame_img = cv2.resize(frame, (0, 0), None, 0.25, 0.25)
         except:
-            return None, None,None
+            return None, None, None
+
+        # convert from opencv BGR color to RGB color
         frame_img = cv2.cvtColor(frame_img, cv2.COLOR_BGR2RGB)
 
+        # ddetect facial parts position
         faces_location = factical_recognition.detect_face_locations(frame_img)
+
+        # encode the facial parts position and save it if not exist
         encoded_faces = factical_recognition.face_encodings(
             frame_img, faces_location)
-        #print("EncodeTime: {}".format(time.time()-start))
+
         detected = []
-        centers =[]
+        centers = []
+
         for encodedFace, faceLocation in zip(encoded_faces, faces_location):
             matches, distances = factical_recognition.compare_faces(
                 faces, encodedFace)
@@ -59,11 +92,13 @@ class FaceRecognition():
             if matches[matchIndex]:
                 name = names[matchIndex]
                 bb = faceLocation
+                # draw the bounding box at the position of detected face
                 y1, x2, y2, x1 = faceLocation
                 y1, x2, y2, x1 = y1*4, x2*4, y2*4, x1*4
                 cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
                 cv2.rectangle(frame, (x1, y2-35), (x2, y2),
-                                (0, 255, 0), cv2.FILLED)
+                              (0, 255, 0), cv2.FILLED)
+                # put the label text
                 cv2.putText(frame, f"{name} {np.round(1-distances[matchIndex],2)} ", (x1+6, y2-6),
                             cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
                 detected.append(name.lower())
@@ -71,19 +106,19 @@ class FaceRecognition():
             else:
                 name = "unknow"
                 bb = faceLocation
+                # draw the bounding box at the position of detected face
                 y1, x2, y2, x1 = faceLocation
                 y1, x2, y2, x1 = y1*4, x2*4, y2*4, x1*4
                 cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
                 cv2.rectangle(frame, (x1, y2-35), (x2, y2),
-                                (0, 255, 0), cv2.FILLED)
+                              (0, 255, 0), cv2.FILLED)
+                 # put the label text
                 cv2.putText(frame, f"{name} ", (x1+6, y2-6),
                             cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
-                #detected.append(name)
-                #centers.append(((x1+x2)*0.5, (y1+y2)*0.5))
-                
-        #print("FPS: {}".format(fps))
-        return frame,detected,centers
+
+        return frame, detected, centers
+
 
 if __name__ == "__main__":
-    f =FaceRecognition()
+    f = FaceRecognition()
     f.detec_from_cam()

@@ -1,3 +1,10 @@
+# Copyright 2021 by Dong Trung Son, Nueremberg University.
+# Email: trungsondo68839@th-nuernberg.de
+# All rights reserved.
+# This file is part of the Ellie-Project,
+# and is released under the "MIT License Agreement". Please see the LICENSE
+# file that should have been included as part of this package.
+
 from typing import OrderedDict
 from ellie_arm.dynamixel.ellie_motors import EllieMotors
 from ellie_arm.dynamixel.inverse_kinematics import IKChain
@@ -113,6 +120,10 @@ if __name__ == "__main__":
     #     config = json.load(f, object_hook=OrderedDict)
 
     ellie = EllieArm()
+
+    """
+    for testing
+    """
     # path = pathlib.Path("src/ellie_arm/actions")
     # files = [e for e in path.iterdir() if e.is_file()]
     # for i in files:

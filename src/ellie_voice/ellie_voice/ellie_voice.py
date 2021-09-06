@@ -1,3 +1,9 @@
+# Copyright 2021 by Dong Trung Son, Nueremberg University.
+# Email: trungsondo68839@th-nuernberg.de
+# All rights reserved.
+# This file is part of the Ellie-Project,
+# and is released under the "MIT License Agreement". Please see the LICENSE
+# file that should have been included as part of this package.
 from ament_index_python.packages import get_package_share_directory
 import time
 from threading import Thread
@@ -23,12 +29,12 @@ class EllieVoice(Node):
     def __init__(self):
         super().__init__("ellie_ears")
 
-        self.declare_parameter("pasue_threshold", 1.0)
+        self.declare_parameter("pause_threshold", 1.0)
         self.declare_parameter("speech_speed", 1.3)
         self.declare_parameter("minimum_energy_threshold", 300)
 
         self.pause_threshold = self.get_parameter(
-            "pasue_threshold").get_parameter_value().double_value
+            "pause_threshold").get_parameter_value().double_value
         self.speech_speed = self.get_parameter(
             "speech_speed").get_parameter_value().double_value
         self.energy_threshold = self.get_parameter(
@@ -116,7 +122,7 @@ class EllieVoice(Node):
 def main(args=None):
     rclpy.init(args=args)
     ellie_voice = EllieVoice()
-    print("pass")
+    # spin Ros in other thread
     thread_ = Thread(
         target=ros_shutdown, args=(ellie_voice,), daemon=True)
     thread_.start()

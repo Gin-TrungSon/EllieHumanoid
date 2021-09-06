@@ -1,12 +1,18 @@
+# Copyright 2021 by Dong Trung Son, Nueremberg University.
+# Email: trungsondo68839@th-nuernberg.de
+# All rights reserved.
+# This file is part of the Ellie-Project,
+# and is released under the "MIT License Agreement". Please see the LICENSE
+# file that should have been included as part of this package.
+
+from imutils.video import VideoStream, FPS
+import importlib.util
+import time
+import cv2
+import numpy as np
 import sys
 import os
 sys.path.append("")
-import numpy as np
-import cv2
-import time
-from threading import Thread
-import importlib.util
-from imutils.video import VideoStream,FPS 
 
 try:
     from picamera.array import PiRGBArray
@@ -17,8 +23,8 @@ except:
 
 USE_TPU = False  # Coral Edge TPU
 RESOLUTION = (640, 480)
+# We do not use PI camera in this project
 PI_CAMERA = False
-#FRAME_RATE = 30
 
 if importlib.util.find_spec('tflite_runtime'):
     from tflite_runtime.interpreter import Interpreter
@@ -47,7 +53,7 @@ STD = 128
 
 
 class Lite_Detector():
-    def __init__(self, threshold = 0.6):
+    def __init__(self, threshold=0.6):
         self.threshold = threshold
         interpreter.allocate_tensors()
         self.input_details = interpreter.get_input_details()
@@ -58,9 +64,26 @@ class Lite_Detector():
         self.float_model = (self.input_details[0]['dtype'] == np.float32)
 
     def inference(self, frame):
+        """
+        Object detection: detect objects in Coco dataset
+        Parameters
+        ----------
+        frame: image frame 
+
+        Returns
+        -------
+        frame:
+            handled frame
+        list:
+            a list of bounding boxes
+        list:
+            a list of labels
+        list:
+            a list of scores
+        """
         try:
             handled_frame = cv2.resize(frame, (self.width, self.height),
-                                   interpolation=cv2.INTER_AREA)
+                                       interpolation=cv2.INTER_AREA)
         except:
             return None, None, None, None
         input_data = np.expand_dims(handled_frame, axis=0)
@@ -92,6 +115,9 @@ class Lite_Detector():
         return frame, rboxes, rclasses, rscores
 
     def detect_from_cam(self):
+        """
+        Detect objects direct from camera: Only for testing !
+        """
         if PI_CAMERA:
             stream = VideoStream(usePiCamera=True, resolution=RESOLUTION)
             fps = FPS().start()
@@ -111,7 +137,8 @@ class Lite_Detector():
                     cv2.destroyAllWindows()
                     break
         else:
-            stream = VideoStream(resolution=RESOLUTION).start()  # start new thread
+            # start new thread
+            stream = VideoStream(resolution=RESOLUTION).start()
             time.sleep(1)
             while stream.isOpened():
                 try:
@@ -135,9 +162,31 @@ class Lite_Detector():
         stream.stop()
 
     def draw_bbox(self, frame, boxes, input_classes, scores):
+        """
+        draw bounding boxes to the frame
+
+        Parameters
+        ----------
+        frame: 
+            image frame 
+        boxes:
+            bounding box positions
+        input_classes: 
+            a list of lables
+        scores: 
+            a list of scores. If score lower than the theshhold, the bounding box will be ignored
+        Returns
+        -------
+        frame:
+            handled frame
+        list:
+            a list of center points
+        list:
+            a list of labels
+        """
         if frame.all() == None:
-            return frame    
-        centers = []    
+            return frame
+        centers = []
         classes = []
         for i in range(len(scores)):
             if scores[i] >= self.threshold and (input_classes[i]) != "???":
@@ -154,7 +203,7 @@ class Lite_Detector():
                               (xmax, ymax), (0, 255, 0), cv2.FILLED)
                 cv2.putText(frame, "{} {:.2f}".format(input_classes[i], scores[i]), (xmin+6, ymax-6),
                             cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
-                center = ((xmax-xmin)*0.5,(ymax-ymin)*0.5)
+                center = ((xmax-xmin)*0.5, (ymax-ymin)*0.5)
                 centers.append(center)
                 classes.append(input_classes[i])
         return frame, centers, classes

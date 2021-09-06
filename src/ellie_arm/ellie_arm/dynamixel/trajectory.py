@@ -73,7 +73,7 @@ class SinusTrajectory(object):
 
         self.compute()
 
-    def compute(self):  # N'Guyen's magic
+    def compute(self):  
         a0 = self.initial
         a1 = self.init_vel
         a2 = self.init_acc / 2.0

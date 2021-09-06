@@ -1,3 +1,10 @@
+# Copyright 2021 by Dong Trung Son, Nueremberg University.
+# Email: trungsondo68839@th-nuernberg.de
+# All rights reserved.
+# This file is part of the Ellie-Project,
+# and is released under the "MIT License Agreement". Please see the LICENSE
+# file that should have been included as part of this package.
+
 import warnings
 import pickle
 import json
@@ -11,7 +18,7 @@ import nltk
 from nltk.stem.lancaster import LancasterStemmer
 from tflearn.layers.core import activation
 stemmer = LancasterStemmer()
-#nltk.download('punkt')
+nltk.download('punkt')
 EPOCHS = 500
 warnings.filterwarnings("ignore")
 
@@ -22,7 +29,7 @@ TRAINED_DATA_PATH = os.path.join(os.path.dirname(__file__),"data/data.txt")
 
 
 def training():
-
+    #load the intents for traning
     if not os.path.exists(INTENTS_PATH):
         print("Intents path does not exist ...")
         exit()
@@ -32,7 +39,7 @@ def training():
     words = []
     classes = []
     documents = []
-
+    # intents tokenizer
     for intent in intents["intents"]:
         for pattern in intent["patterns"]:
             w = nltk.word_tokenize(pattern, language="german")
@@ -75,7 +82,7 @@ def training():
     tf.compat.v1.reset_default_graph()
 
     tflearn.init_graph(num_cores=8)
-
+    # initiate model
     net = tflearn.input_data(shape=[None, len(train_x[0])])
     net = tflearn.fully_connected(net, 8)
     net = tflearn.fully_connected(net, 16)
@@ -83,7 +90,6 @@ def training():
     net = tflearn.fully_connected(net, len(train_y[0]), activation="softmax")
     net = tflearn.regression(net)
 
-    #model = tflearn.DNN(net, tensorboard_dir="tflearn_logs")
     model = tflearn.DNN(net)
     model.fit(train_x, train_y, n_epoch=EPOCHS, batch_size=8, show_metric=True)
     model.save(WEIGHT_PATH)

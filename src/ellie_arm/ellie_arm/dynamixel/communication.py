@@ -1,10 +1,13 @@
-from os import error
-from ellie_arm.dynamixel import trajectory
+# Copyright 2021 by Dong Trung Son, Nueremberg University.
+# Email: trungsondo68839@th-nuernberg.de
+# All rights reserved.
+# This file is part of the Ellie-Project,
+# and is released under the "MIT License Agreement". Please see the LICENSE
+# file that should have been included as part of this package.
+
 from ellie_arm.dynamixel.trajectory import MinimumJerkTrajectory
 from ellie_arm.dynamixel.ultis import *
-from numpy import deg2rad
 from dynamixel_sdk import *
-from contextlib import contextmanager
 import logging
 import numpy as np
 logger = logging.getLogger(__name__)
@@ -222,10 +225,7 @@ class DxlInterface:
             for motor in self._motors.motors:
                 position = self.present_position_degree(
                     motor.id, motor.type)-motor.offset
-                #position = dxl_to_degree(self.groupBulkReadPosition.getData(motor.id,PRESENT_POSITION,2),motor.type)
-                #velocity = dxl_to_speed(self.groupBulkReadVelocity.getData(motor.id,PRESENT_SPEED,2),motor.type)
                 velocity = self.present_speed(motor.id, motor.type)
-                #print(f"position {position} velocity {velocity} ")
                 data[motor.name] = [position, velocity]
             return data
         except AttributeError:

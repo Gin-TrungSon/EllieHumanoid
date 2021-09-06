@@ -1,21 +1,24 @@
-from os import path, times
+# Copyright 2021 by Dong Trung Son, Nueremberg University.
+# Email: trungsondo68839@th-nuernberg.de
+# All rights reserved.
+# This file is part of the Ellie-Project,
+# and is released under the "MIT License Agreement". Please see the LICENSE
+# file that should have been included as part of this package.
+
 from typing import OrderedDict
 import rclpy
-from multiprocessing import Process
-from rclpy.action import ActionClient
 from rclpy.node import Node
 import json
-from ellie_msgs.action import ExecuteBehavior
 from pathlib import Path
 import os
-from ellie_msgs.action import Move
 from ellie_msgs.msg import DetectedInfo
 from ellie_msgs.srv import String
 import time
 import random
-from rclpy.task import Future
 
 REALESE_TIME = 600
+
+
 class Ellie(Node):
 
     def __init__(self):
@@ -35,7 +38,7 @@ class Ellie(Node):
         self._execute_behavior_srv = self.create_client(
             String, "execute_behavior")
         self.client_futures = []
-        self.black_list={}
+        self.black_list = {}
 
     def recognized_subscriber_callback(self, msg):
         self.get_logger().info(str(msg))
@@ -44,19 +47,22 @@ class Ellie(Node):
             # TODO: rotate robot head
             self.get_logger().info(str(msg.names))
             black_keys = list(self.black_list.keys())
-            i = random.choice([x for x in msg.names if x not in black_keys or (time.time()-self.black_list[x.lower]()) > REALESE_TIME] )
+            i = random.choice([x for x in msg.names if x not in black_keys or (
+                time.time()-self.black_list[x.lower]()) > REALESE_TIME])
             id = i.lower()
             self.black_list[id] = time.time()
             if id in registed_names:
-                self.client_futures.append(random.choice(self.send_behavior_request(self.registed[id]["behavior"])))
-                self.client_futures.append(random.choice(self.send_speak_request(self.registed[id]["speak"])))
-                self.client_futures.append(random.choice(self.send_eyes_animation_request(self.registed[id]["eyes_animation"])))
-        
+                self.client_futures.append(self.send_behavior_request(
+                    random.choice(self.registed[id]["behavior"])))
+                self.client_futures.append(self.send_speak_request(
+                    random.choice(self.registed[id]["speak"])))
+                self.client_futures.append(self.send_eyes_animation_request(
+                    random.choice(self.registed[id]["eyes_animation"])))
 
     def send_behavior_request(self, data):
         msg = String.Request()
         msg.request = data
-        return self._execute_behavior_srv.call_async(msg)
+        return self._execute_behavior_srv.call_async((msg))
 
     def send_speak_request(self, data):
         msg = String.Request()
@@ -66,7 +72,7 @@ class Ellie(Node):
     def send_eyes_animation_request(self, data):
         msg = String.Request()
         msg.request = data
-        return  self._eyes_animation.call_async(msg)
+        return self._eyes_animation.call_async(msg)
 
 
 def main(args=None):
@@ -75,16 +81,12 @@ def main(args=None):
     time.sleep(5)
     while rclpy.ok():
         rclpy.spin_once(ellie)
-        
+
         for i in ellie.client_futures:
             if i.done():
                 ellie.get_logger().info(f"Response : {i.result()}")
             else:
-                rclpy.spin_until_future_complete(ellie,i,timeout_sec=60)
-
-            
-            
-
+                rclpy.spin_until_future_complete(ellie, i, timeout_sec=60)
 
     rclpy.shutdown()
 
