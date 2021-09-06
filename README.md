@@ -7,7 +7,7 @@ EllieHumanoid is a project that provides a humanoid robot with AI functions and 
 - [x] Object detection 
 
 - [x] Face recognition
-- [x] Voice asisstent
+- [x] Voice assistant
 - [x] IK motion planning
 - [x] Record and replay behaviors
 
