@@ -49,6 +49,9 @@ sh -c "echo \"alias cb='cd ~/$name_ellie_workspace && colcon build --symlink-ins
 sh -c "echo \"source /opt/ros/$name_ros_version/setup.bash\" >> ~/.bashrc"
 sh -c "echo \"source ~/$name_ellie_workspace/install/local_setup.bash\" >> ~/.bashrc"
 
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+sudo apt install ./google-chrome-stable_current_amd64.deb
+
 echo "[Virtual enviroment]"
 cd $HOME/$name_ellie_workspace
 sudo apt install python3-virtualenv
