@@ -1,14 +1,17 @@
-import os
+
+# Copyright 2021 by Dong Trung Son, Nueremberg University.
+# Email: trungsondo68839@th-nuernberg.de
+# All rights reserved.
+# This file is part of the Ellie-Project,
+# and is released under the "MIT License Agreement". Please see the LICENSE
+# file that should have been included as part of this package.import os
 from ellie_msgs.srv import String
 from PyQt5.QtWidgets import QApplication, QDesktopWidget, QLabel
-from PyQt5.QtGui import QMovie
-from PyQt5.QtCore import QSize, QUrl, QTimer
+from PyQt5.QtCore import  QUrl, QTimer
 from PyQt5.QtWebEngineWidgets import *
 from threading import Thread
 from rclpy.node import Node
 import rclpy
-import random
-import datetime
 import sys
 sys.path.append("")
 class OpenWebView(QDesktopWidget):
