@@ -23,7 +23,7 @@ $ bash ./install.sh
 ```
 
 ## Usage
-You can create a Launch file and add whatever module you want to use.
+You can create a Launch file and add any module you want to use.
 ```python
 from launch import LaunchDescription
 from launch_ros.actions import Node
