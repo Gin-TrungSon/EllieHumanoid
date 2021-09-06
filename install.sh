@@ -50,12 +50,12 @@ sh -c "echo \"source /opt/ros/$name_ros_version/setup.bash\" >> ~/.bashrc"
 sh -c "echo \"source ~/$name_ellie_workspace/install/local_setup.bash\" >> ~/.bashrc"
 
 echo "[Virtual enviroment]"
-cd ~/$name_ellie_workspace
+cd $HOME/$name_ellie_workspace
 sudo apt install python3-virtualenv
 virtualenv -p python3 ./venv
 source ./venv/bin/activate
 touch ./venv/COLCON_IGNORE
-sh -c "echo \"source ~/$name_colcon_workspace/venv/bin/activate\" >> ~/.bashrc"
+sh -c "echo \"source ~/$name_ellie_workspace/venv/bin/activate\" >> ~/.bashrc"
 sh -c "echo \"export PYTHONPATH=$PYTHONPATH:~/$name_ellie_workspace/venv/lib/python3.8/site-packages\" >> ~/.bashrc"
 
 echo "[Install requirements]"
@@ -63,10 +63,10 @@ sudo apt-get install ffmpeg
 sudo apt-get install portaudio19-dev python3-pyaudio -y
 sudo apt install python3-opencv
 
-wget https://github.com/Gin-TrungSon/EllieHumanoid/blob/devel/requirements.txt
+wget https://raw.githubusercontent.com/Gin-TrungSon/EllieHumanoid/devel/requirements.txt
 pip install -r requirements.txt
 
-wget https://github.com/Gin-TrungSon/EllieHumanoid/tree/devel
+git clone -b devel https://github.com/Gin-TrungSon/EllieHumanoid .
 
 sh -c "echo 1 > /sys/bus/usb-serial/devices/ttyUSB0/latency_timer"
 sudo apt-get update
