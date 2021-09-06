@@ -51,6 +51,7 @@ sh -c "echo \"source ~/$name_ellie_workspace/install/local_setup.bash\" >> ~/.ba
 
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 sudo apt install ./google-chrome-stable_current_amd64.deb
+rm ./google-chrome-stable_current_amd64.deb
 
 echo "[Virtual enviroment]"
 cd $HOME/$name_ellie_workspace

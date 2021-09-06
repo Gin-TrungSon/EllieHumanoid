@@ -23,13 +23,12 @@ demo-nodes-py==0.9.3
 dlib==19.22.0
 docutils==0.17.1
 domain-coordinator==0.9.2
--e git+https://github.com/Gin-TrungSon/EllieHumanoid.git@39fa7ac05e4c7a887a435ad5e48b680d727201ab#egg=dynamile&subdirectory=build/dynamile
 dynamixel-sdk==3.7.31
--e git+https://github.com/Gin-TrungSon/EllieHumanoid.git@39fa7ac05e4c7a887a435ad5e48b680d727201ab#egg=ellie&subdirectory=build/ellie
--e git+https://github.com/Gin-TrungSon/EllieHumanoid.git@39fa7ac05e4c7a887a435ad5e48b680d727201ab#egg=ellie_arm&subdirectory=build/ellie_arm
--e git+https://github.com/Gin-TrungSon/EllieHumanoid.git@39fa7ac05e4c7a887a435ad5e48b680d727201ab#egg=ellie_eyes&subdirectory=build/ellie_eyes
--e git+https://github.com/Gin-TrungSon/EllieHumanoid.git@39fa7ac05e4c7a887a435ad5e48b680d727201ab#egg=ellie_screens&subdirectory=build/ellie_screens
--e git+https://github.com/Gin-TrungSon/EllieHumanoid.git@39fa7ac05e4c7a887a435ad5e48b680d727201ab#egg=ellie_voice&subdirectory=build/ellie_voice
+-e git+https://github.com/Gin-TrungSon/EllieHumanoid.git@5fad445a2a897038955e4e1cf6a992de54b816ca#egg=ellie&subdirectory=build/ellie
+-e git+https://github.com/Gin-TrungSon/EllieHumanoid.git@5fad445a2a897038955e4e1cf6a992de54b816ca#egg=ellie_arm&subdirectory=build/ellie_arm
+-e git+https://github.com/Gin-TrungSon/EllieHumanoid.git@5fad445a2a897038955e4e1cf6a992de54b816ca#egg=ellie_eyes&subdirectory=build/ellie_eyes
+-e git+https://github.com/Gin-TrungSon/EllieHumanoid.git@5fad445a2a897038955e4e1cf6a992de54b816ca#egg=ellie_screens&subdirectory=build/ellie_screens
+-e git+https://github.com/Gin-TrungSon/EllieHumanoid.git@5fad445a2a897038955e4e1cf6a992de54b816ca#egg=ellie_voice&subdirectory=build/ellie_voice
 empy==3.3.4
 examples-rclpy-executors==0.9.4
 examples-rclpy-minimal-action-client==0.9.4
