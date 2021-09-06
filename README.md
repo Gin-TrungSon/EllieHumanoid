@@ -1,5 +1,4 @@
 # EllieHumanoid
-# EllieHumanoid
 
 EllieHumanoid is a project that provides a humanoid robot with AI functions and can communicate with ROS2.
 
