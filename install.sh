@@ -31,9 +31,33 @@ echo "[Environment setup]"
 source /opt/ros/$name_ros_version/setup.sh
 sudo apt install -y python3-argcomplete python3-colcon-common-extensions python3-vcstool git wget
 
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+sudo apt install ./google-chrome-stable_current_amd64.deb
+rm ./google-chrome-stable_current_amd64.deb
+
+echo "[Virtual enviroment]"
+cd $HOME
+sudo apt install python3-virtualenv
+virtualenv -p python3 ./venv
+source ./venv/bin/activate
+touch ./venv/COLCON_IGNORE
+sh -c "echo \"source ~/venv/bin/activate\" >> ~/.bashrc"
+sh -c "echo \"export PYTHONPATH=$PYTHONPATH:~/venv/lib/python3.8/site-packages\" >> ~/.bashrc"
+
+echo "[Install requirements]"
+sudo apt-get install ffmpeg
+sudo apt-get install portaudio19-dev python3-pyaudio -y
+sudo apt install python3-opencv
+
+wget https://raw.githubusercontent.com/Gin-TrungSon/EllieHumanoid/devel/requirements.txt
+pip install -r requirements.txt
+
+
+
 echo "[Make the ellie workspace and test ellie build]"
-mkdir -p $HOME/$name_ellie_workspace/src
+mkdir -p $HOME/$name_ellie_workspace
 cd $HOME/$name_ellie_workspace
+git clone -b devel https://github.com/Gin-TrungSon/EllieHumanoid .
 colcon build --symlink-install
 
 echo "[Set the ROS evironment]"
@@ -48,29 +72,6 @@ sh -c "echo \"alias cb='cd ~/$name_ellie_workspace && colcon build --symlink-ins
 
 sh -c "echo \"source /opt/ros/$name_ros_version/setup.bash\" >> ~/.bashrc"
 sh -c "echo \"source ~/$name_ellie_workspace/install/local_setup.bash\" >> ~/.bashrc"
-
-wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-sudo apt install ./google-chrome-stable_current_amd64.deb
-rm ./google-chrome-stable_current_amd64.deb
-
-echo "[Virtual enviroment]"
-cd $HOME/$name_ellie_workspace
-sudo apt install python3-virtualenv
-virtualenv -p python3 ./venv
-source ./venv/bin/activate
-touch ./venv/COLCON_IGNORE
-sh -c "echo \"source ~/$name_ellie_workspace/venv/bin/activate\" >> ~/.bashrc"
-sh -c "echo \"export PYTHONPATH=$PYTHONPATH:~/$name_ellie_workspace/venv/lib/python3.8/site-packages\" >> ~/.bashrc"
-
-echo "[Install requirements]"
-sudo apt-get install ffmpeg
-sudo apt-get install portaudio19-dev python3-pyaudio -y
-sudo apt install python3-opencv
-
-wget https://raw.githubusercontent.com/Gin-TrungSon/EllieHumanoid/devel/requirements.txt
-pip install -r requirements.txt
-
-git clone -b devel https://github.com/Gin-TrungSon/EllieHumanoid .
 
 sh -c "echo 1 > /sys/bus/usb-serial/devices/ttyUSB0/latency_timer"
 sudo apt-get update
