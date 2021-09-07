@@ -1,3 +1,4 @@
+wheel==0.35.0
 absl-py==0.13.0
 astunparse==1.6.3
 autopep8==1.5.7
