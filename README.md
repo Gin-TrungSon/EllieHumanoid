@@ -39,6 +39,7 @@ $ sudo apt install wget
 $ wget https://raw.githubusercontent.com/Gin-TrungSon/EllieHumanoid/devel/install.sh
 $ sudo chmod 755 ./install.sh
 $ bash ./install.sh
+```
 
 ## Usage
 You can create a Launch file and add any module you want to use.
