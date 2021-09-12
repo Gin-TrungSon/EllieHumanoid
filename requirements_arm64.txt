@@ -51,7 +51,6 @@ SpeechRecognition==3.8.1
 tensorboard==2.6.0
 tensorboard-data-server==0.6.1
 tensorboard-plugin-wit==1.8.0
-tensorflow @ file:///home/ubuntu/tensorflow-2.6.0-cp38-cp38-linux_aarch64.whl
 tensorflow-estimator==2.6.0
 termcolor==1.1.0
 tflearn==0.5.0
