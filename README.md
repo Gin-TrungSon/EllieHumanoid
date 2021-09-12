@@ -20,25 +20,14 @@ $ wget https://raw.githubusercontent.com/Gin-TrungSon/EllieHumanoid/devel/instal
 $ sudo chmod 755 ./install.sh
 $ bash ./install.sh
 ```
-### Create Docker container on Raspberry
+### Installation r on Raspberry (arm64/aarch64)
 For some known Ubuntu issues, we have to manually create the Docker container on Raspberry
 ```bash
 # This ensures you install the latest version of the software
 $ sudo apt-get update && sudo apt-get upgrade
-# Install Docker on Raspberry
-$ curl -fsSL https://get.docker.com -o get-docker.sh
-$ sudo sh get-docker.sh
-# This allows user to execute docker commands.
-$ sudo usermod -aG docker $USER
-# Start the docker service
-$ sudo systemctl start docker 
-$ docker run -it -e DISPLAY=$DISPLAY -v /dev:/dev -v /tmp/.X11-unix:/tmp/.X11-unix:rw -e QT_X11_NO_MITSHM=1 --privileged --name ellie_container ubuntu:20.04
-# Inside of docker container
-$ apt-get update -y && apt-get install sudo
-$ sudo apt install wget
-$ wget https://raw.githubusercontent.com/Gin-TrungSon/EllieHumanoid/devel/install.sh
-$ sudo chmod 755 ./install.sh
-$ bash ./install.sh
+$ wget https://raw.githubusercontent.com/Gin-TrungSon/EllieHumanoid/devel/install_arm64.sh
+$ sudo chmod 755 ./install_arm64.sh
+$ bash ./install_arm64.sh
 ```
 
 ## Usage
