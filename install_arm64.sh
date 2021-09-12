@@ -41,6 +41,8 @@ sudo apt-get install flac
 sudo apt-get install -y libhdf5-dev libc-ares-dev libeigen3-dev gcc gfortran libgfortran5 \
     libatlas3-base libatlas-base-dev libopenblas-dev libopenblas-base libblas-dev \
     liblapack-dev cython3 openmpi-bin libopenmpi-dev libatlas-base-dev python3-dev
+sudo apt-get install python3-pyqt5
+sudo apt install python3-pyqt5.qtwebengine
 
 echo "[Virtual enviroment]"
 cd $HOME
