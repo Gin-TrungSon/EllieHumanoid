@@ -1,5 +1,5 @@
 FROM ros:foxy
-RUN apt-get update -y && apt-get install sudo && sudo apt-get install wget && \
+RUN apt-get update -y && && apt-get install -y apt-utils && apt-get install sudo && sudo apt-get install wget && \
     wget https://raw.githubusercontent.com/Gin-TrungSon/EllieHumanoid/devel/install_docker.sh && \
     sudo chmod 755 ./install_docker.sh
 RUN bash ./install_docker.sh
