@@ -23,9 +23,15 @@ sudo locale-gen en_US en_US.UTF-8
 sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
 export LANG=en_US.UTF-8
 
+echo "[Setup Sources]"
+sudo rm -rf /var/lib/apt/lists/* && sudo apt update && sudo apt install -y curl gnupg2 lsb-release
+sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key  -o /usr/share/keyrings/ros-archive-keyring.gpg
+sudo sh -c 'echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null'
+sudo apt-get update
+
 echo "[Environment setup]"
 source /opt/ros/$name_ros_version/setup.sh
-sudo apt-get install -y python3-argcomplete python3-colcon-common-extensions python3-vcstool git wget
+sudo apt-get install -y python3-argcomplete python3-colcon-common-extensions python3-vcstool git 
 sudo apt-get install chromium-browser
 sudo apt-get install flac
 sudo apt-get install -y libhdf5-dev libc-ares-dev libeigen3-dev gcc gfortran libgfortran5 \
@@ -56,7 +62,7 @@ pip install tensorflow-2.6.0-cp38-cp38-linux_aarch64.whl
 rm -rf tensorflow-2.6.0-cp38-cp38-linux_aarch64.whl
 
 
-wget https://raw.githubusercontent.com/Gin-TrungSon/EllieHumanoid/devel/requirements_arm64.txt
+curl https://raw.githubusercontent.com/Gin-TrungSon/EllieHumanoid/devel/requirements_arm64.txt -o requirements_arm64.txt 
 pip install -r requirements_arm64.txt
 
 
