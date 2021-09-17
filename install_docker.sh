@@ -21,18 +21,18 @@ name_ellie_workspace=${name_ellie_workspace:="ellie_ws"}
 
 echo "[Environment setup]"
 source /opt/ros/$name_ros_version/setup.sh
-sudo apt install -y python3-argcomplete python3-colcon-common-extensions python3-vcstool git wget
-sudo apt install chromium-browser
+sudo apt-get install -y python3-argcomplete python3-colcon-common-extensions python3-vcstool git wget
+sudo apt-get install chromium-browser
 sudo apt-get install flac
 sudo apt-get install -y libhdf5-dev libc-ares-dev libeigen3-dev gcc gfortran libgfortran5 \
     libatlas3-base libatlas-base-dev libopenblas-dev libopenblas-base libblas-dev \
     liblapack-dev cython3 openmpi-bin libopenmpi-dev libatlas-base-dev python3-dev
 sudo apt-get install python3-pyqt5
-sudo apt install python3-pyqt5.qtwebengine
+sudo apt-get install python3-pyqt5.qtwebengine
 
 echo "[Virtual enviroment]"
 cd $HOME
-sudo apt install python3-virtualenv
+sudo apt-get install python3-virtualenv
 virtualenv -p python3 ./venv
 source ./venv/bin/activate
 touch ./venv/COLCON_IGNORE
@@ -42,7 +42,7 @@ sh -c "echo \"export PYTHONPATH=$PYTHONPATH:~/venv/lib/python3.8/site-packages\"
 echo "[Install requirements]"
 sudo apt-get install ffmpeg
 sudo apt-get install portaudio19-dev python3-pyaudio -y
-sudo apt install python3-opencv
+sudo apt-get install python3-opencv
 
 ## install tensorflow
 pip install gdown
