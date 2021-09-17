@@ -16,6 +16,13 @@ echo "[Set the target ROS version and name of ellie workspace]"
 name_ros_version=${name_ros_version:="foxy"}
 name_ellie_workspace=${name_ellie_workspace:="ellie_ws"}
 
+echo "[Set Locale]"
+sudo apt update && sudo apt install locales
+sudo apt-get install python3-pip dialog
+sudo locale-gen en_US en_US.UTF-8
+sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
+export LANG=en_US.UTF-8
+
 echo "[Environment setup]"
 source /opt/ros/$name_ros_version/setup.sh
 sudo apt-get install -y python3-argcomplete python3-colcon-common-extensions python3-vcstool git wget
