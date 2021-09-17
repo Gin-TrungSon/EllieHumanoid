@@ -44,6 +44,7 @@ sh -c "echo \"source ~/venv/bin/activate\" >> ~/.bashrc"
 sh -c "echo \"export PYTHONPATH=$PYTHONPATH:~/venv/lib/python3.8/site-packages\" >> ~/.bashrc"
 
 echo "[Install requirements]"
+python3 -m pip install --upgrade pip
 sudo apt-get install ffmpeg
 sudo apt-get install portaudio19-dev python3-pyaudio -y
 sudo apt-get install python3-opencv
@@ -52,6 +53,7 @@ sudo apt-get install python3-opencv
 pip install gdown
 gdown https://drive.google.com/u/0/uc?id=13_otGSGrsE1atBB2RjcPhOvONErKSFef&export=download
 pip install tensorflow-2.6.0-cp38-cp38-linux_aarch64.whl
+rm -rf tensorflow-2.6.0-cp38-cp38-linux_aarch64.whl
 
 
 wget https://raw.githubusercontent.com/Gin-TrungSon/EllieHumanoid/devel/requirements_arm64.txt
