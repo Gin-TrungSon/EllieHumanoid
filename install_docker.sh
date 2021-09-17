@@ -11,9 +11,6 @@ echo "[Note] OS version  >>> Ubuntu 20.04 (Focal Fossa)"
 echo "[Note] Target ROS version >>> ROS 2 Foxy Fitzroy"
 echo "[Note] Ellie workspace   >>> $HOME/ellie_ws"
 echo ""
-echo "PRESS [ENTER] TO CONTINUE THE INSTALLATION"
-echo "IF YOU WANT TO CANCEL, PRESS [CTRL] + [C]"
-read
 
 echo "[Set the target ROS version and name of ellie workspace]"
 name_ros_version=${name_ros_version:="foxy"}
