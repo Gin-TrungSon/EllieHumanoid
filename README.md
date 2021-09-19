@@ -20,7 +20,7 @@ $ wget https://raw.githubusercontent.com/Gin-TrungSon/EllieHumanoid/devel/instal
 $ sudo chmod 755 ./install.sh
 $ bash ./install.sh
 ```
-### Installation r on Raspberry (arm64/aarch64)
+### Installation on Raspberry (arm64/aarch64)
 For some known Ubuntu issues, we have to manually create the Docker container on Raspberry
 ```bash
 # This ensures you install the latest version of the software
@@ -29,6 +29,15 @@ $ wget https://raw.githubusercontent.com/Gin-TrungSon/EllieHumanoid/devel/instal
 $ sudo chmod 755 ./install_arm64.sh
 $ bash ./install_arm64.sh
 ```
+### Using Docker
+```bash
+$ sudo apt-get update 
+$ git clone -b devel https://github.com/Gin-TrungSon/EllieHumanoid
+$ wget https://raw.githubusercontent.com/Gin-TrungSon/EllieHumanoid/devel/Dockerfile
+$ docker build -t ellie:arm64 -f Dockerfile .
+$ docker run -it -e DISPLAY=$DISPLAY -v /dev:/dev -v /tmp/.X11-unix:/tmp/.X11-unix:rw -e QT_X11_NO_MITSHM=1 --privileged --name ellie_container ellie:arm64
+```
+
 
 ## Usage
 You can create a Launch file and add any module you want to use.
