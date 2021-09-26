@@ -28,20 +28,12 @@ DIR_TEMP = os.path.join(os.path.dirname(__file__), "temp")
 class EllieVoice(Node):
     def __init__(self):
         super().__init__("ellie_ears")
-
         self.declare_parameter("pause_threshold", 1.0)
         self.declare_parameter("speech_speed", 1.3)
         self.declare_parameter("minimum_energy_threshold", 300)
 
-        self.pause_threshold = self.get_parameter(
-            "pause_threshold").get_parameter_value().double_value
-        self.speech_speed = self.get_parameter(
-            "speech_speed").get_parameter_value().double_value
-        self.energy_threshold = self.get_parameter(
-            "minimum_energy_threshold").get_parameter_value().integer_value
-
         self._listen_response = self.create_publisher(
-            Conversation, 'ellie/communication', 1)
+            Conversation, 'communication', 1)
         self._speak = self.create_service(String, "speak", self.speak_callback)
 
         print("Prepare for listening ...")
@@ -59,6 +51,19 @@ class EllieVoice(Node):
             self._recognizer.pause_threshold = self.pause_threshold
             self._recognizer.adjust_for_ambient_noise(source)
         self.reset()
+
+    @property
+    def pause_threshold(self) :
+        return self.get_parameter(
+            "pause_threshold").get_parameter_value().double_value
+    @property
+    def speech_speed(self) :
+        return self.get_parameter(
+            "speech_speed").get_parameter_value().double_value
+    @property
+    def energy_threshold(self) :
+        return self.get_parameter(
+            "minimum_energy_threshold").get_parameter_value().integer_value
 
     def speak_callback(self, request, response):
         print(f"received : {request.request}")

@@ -5,21 +5,22 @@
 # and is released under the "MIT License Agreement". Please see the LICENSE
 # file that should have been included as part of this package.
 
+from ellie_msgs.msg import DetectedInfo, Position
+import rclpy
+from rclpy.node import Node
+from rcl_interfaces.msg import ParameterDescriptor
+from cv_bridge import CvBridge
+from time import sleep
+from ellie_eyes.face_recognition.factical_face_rec import FaceRecognition
+from ellie_eyes.object_detection_lite.lite_detection import *
+from imutils.video import VideoStream
+import cv2.cv2 as cv2
+from std_msgs.msg import String
+import json
+from sensor_msgs.msg import CompressedImage
 import sys
 sys.path.append("")
-from sensor_msgs.msg import CompressedImage
-import json
-from std_msgs.msg import String
-import cv2.cv2 as cv2
-from imutils.video import VideoStream
-from ellie_eyes.object_detection_lite.lite_detection import *
-from ellie_eyes.face_recognition.factical_face_rec import FaceRecognition
-from time import sleep
-from cv_bridge import CvBridge
-from rcl_interfaces.msg import ParameterDescriptor
-from rclpy.node import Node
-import rclpy
-from ellie_msgs.msg import DetectedInfo, Position
+
 
 class EllieEyes(Node):
     def __init__(self):
@@ -34,16 +35,6 @@ class EllieEyes(Node):
         self.declare_parameter("period", 2.0)
 
         self.resolution = (640, 480)
-        self.usePicamera = self.get_parameter(
-            "use_PiCamera").get_parameter_value().bool_value
-        self.object_detection_threshold = self.get_parameter(
-            "object_detection_threshold").get_parameter_value()._bool_value
-        self.flag_publishing = int(self.get_parameter(
-            "flag_publishing").get_parameter_value().integer_value)
-        self.display = self.get_parameter(
-            "display").get_parameter_value().bool_value
-        self.period = self.get_parameter(
-            "period").get_parameter_value().double_value
 
         self.bridge = CvBridge()
         self.original_img_publisher = self.create_publisher(
@@ -72,6 +63,31 @@ class EllieEyes(Node):
         sleep(2)
         print(self.flag_publishing)
         self.timer = self.create_timer(self.period, self.update)
+
+    @property
+    def usePicamera(self):
+        return self.get_parameter(
+            "use_PiCamera").get_parameter_value().bool_value
+
+    @property
+    def object_detection_threshold(self):
+        return self.get_parameter(
+            "object_detection_threshold").get_parameter_value()._bool_value
+
+    @property
+    def flag_publishing(self):
+        return int(self.get_parameter(
+            "flag_publishing").get_parameter_value().integer_value)
+
+    @property
+    def display(self):
+        return self.get_parameter(
+            "display").get_parameter_value().bool_value
+
+    @property
+    def period(self):
+        return self.get_parameter(
+            "period").get_parameter_value().double_value
 
     def update(self):
         frame = self.stream.read()
@@ -113,9 +129,9 @@ class EllieEyes(Node):
         msg = DetectedInfo()
         for i in range(len(centers)):
             msg.names.append(classes[i])
-            position = Position() 
-            position.x = centers[i][0]/self.resolution[0] -0.5
-            position.y = 0.5-centers[i][1]/self.resolution[1] 
+            position = Position()
+            position.x = centers[i][0]/self.resolution[0] - 0.5
+            position.y = 0.5-centers[i][1]/self.resolution[1]
             msg.positions.append(position)
         print(msg)
         return msg
