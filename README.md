@@ -96,7 +96,7 @@ Please make sure to update tests as appropriate.
 ## Documentation 
 [Ellie Packages](https://github.com/Gin-TrungSon/EllieHumanoid/wiki/Ros2-Interfaces)
 
-[Documentation](https://github.com/Gin-TrungSon/EllieHumanoid/blob/devel/Documentation.docx) (German)
+[Documentation](https://github.com/Gin-TrungSon/EllieHumanoid/blob/devel/Documentation.pdf) (German)
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
 
