@@ -21,7 +21,6 @@ $ sudo chmod 755 ./install.sh
 $ bash ./install.sh
 ```
 ### Installation on Raspberry (arm64/aarch64)
-For some known Ubuntu issues, we have to manually create the Docker container on Raspberry
 ```bash
 # This ensures you install the latest version of the software
 $ sudo apt-get update && sudo apt-get upgrade
