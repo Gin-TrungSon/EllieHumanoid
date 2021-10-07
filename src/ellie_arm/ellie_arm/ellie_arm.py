@@ -16,6 +16,9 @@ from ellie_arm.dynamixel.ellie_arm import EllieArm
 from rcl_interfaces.msg import ParameterDescriptor
 from pathlib import Path
 import os
+
+IDs = [36,37,33,34,35,41,42,43,44,51,52,53,54]
+IDLE = [0,0,0,0,0,80,5,0,0,-80,-5,0,0]
 class Ros2Interface(Node):
 
     def __init__(self):
@@ -40,6 +43,10 @@ class Ros2Interface(Node):
         self._replay = self.create_service(String,"replay",self.replay)
         self._resume = self.create_service(String, "resume", self.resume)
         self._execute_behavior_srv = self.create_service(String,"execute_behavior",self.execute_behavior_srv)
+        self.gotoIdle()
+
+    def gotoIdle(self, duration =5):
+        self.ellie_arm.dxl_interface.goto_position_group(duration,IDs,IDLE)
 
     def start_recording(self, request, response):
         self.ellie_arm.start_recorder(str(request.request))

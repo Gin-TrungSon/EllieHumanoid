@@ -165,7 +165,7 @@ class DxlInterface:
             for i, p, v in zip(ids, positions, velocities):
                 motor = self._motors.get_motor(i)
                 data[motor.name] = [p, v]
-        self.goto_position_sync(data, duration)
+        self.execute_trajectories(data, duration)
 
     def goto_position_sync(self, positions, duration):
         time_ = 0
