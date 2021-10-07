@@ -20,7 +20,7 @@ class OpenWebView(QDesktopWidget):
         self.external_url = ""
         self.webview = QWebEngineView()
         self.webview.load(QUrl("https://www.th-nuernberg.de/"))
-        self.screen(0)
+        self.webview.setGeometry(self.screenGeometry(0))
         self.webview.showFullScreen()
         self.webview.mousePressEvent = lambda: self._resetTimer()
         self.timer = QTimer(self)
@@ -61,7 +61,6 @@ class EllieBrustMotnior(Node):
 
     def ui_init__(self):
         app = QApplication(sys.argv)
-        self.monitor = QDesktopWidget().screenGeometry(1)
         self.webView = OpenWebView()
         sys.exit(app.exec_())
 

@@ -5,10 +5,12 @@
 # and is released under the "MIT License Agreement". Please see the LICENSE
 # file that should have been included as part of this package.
 import os
+
+from PyQt5 import QtCore
 from ellie_msgs.srv import String
 from PyQt5.QtWidgets import QApplication, QDesktopWidget, QLabel
 from PyQt5.QtGui import QMovie
-from PyQt5.QtCore import QSize, QUrl, QTimer
+from PyQt5.QtCore import QSize, QTimer
 from PyQt5.QtWebEngineWidgets import *
 from threading import Thread
 from rclpy.node import Node
@@ -21,7 +23,12 @@ class EyesAnimation (QDesktopWidget):
         super().__init__()
         self.external_change = ""
         self.label_animation = QLabel()
-        self.label_animation.setFixedSize(480, 240)
+        screen = self.screenGeometry(1)
+        width = screen.width()
+        height = screen.height()
+        self.setWindowFlag(QtCore.Qt.FramelessWindowHint )
+        self.setFixedSize(width, height)    
+        self.label_animation.showFullScreen()
         self.motions = {}
         self.eyes_motion_path = os.path.join(
             os.path.dirname(__file__), "eye_motions")
@@ -32,7 +39,7 @@ class EyesAnimation (QDesktopWidget):
 
         self.currentMotion = "idle"
         self.motion = QMovie(self.motions[self.currentMotion])
-        self.motion.setScaledSize(QSize(480, 240))
+        self.motion.setScaledSize(QSize(width, height))
         self.label_animation.setMovie(self.motion)
         self.motion.start()
         self.label_animation.setGeometry(self.screenGeometry(1))
@@ -95,8 +102,7 @@ class EllieHeadMonitor(Node):
 
     def ui_init__(self):
         app = QApplication(sys.argv)
-        self.monitor = QDesktopWidget().screenGeometry(1)
-        self.eyes_animation = EyesAnimation()
+        self.eyes_animation = EyesAnimation()        
         sys.exit(app.exec_())
 
     def changeEyesMotion_callback(self, request, response):
