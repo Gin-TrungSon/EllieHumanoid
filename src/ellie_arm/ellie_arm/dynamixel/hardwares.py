@@ -21,24 +21,55 @@ class Motor:
 
     @property
     def name(self):
+        """Motor name
+
+        Returns:
+            string: name of motor
+        """
         return self._name
 
     @property
     def id(self):
+        """Motor Id
+
+        Returns:
+            int: id of motor
+        """
         return self._id
 
     @property
     def angle_limit(self):
+        """get limit ange for the motor
+
+        Returns:
+            list: [angle_min, angle_max]
+        """
         return self._angle_limit
 
     @property
     def type(self):
+        """Get motor type
+
+        Returns:
+            MotorType: type of motor
+        """
         return self._type
 
     @property
     def offset(self):
+        """Get motor offset
+
+        Returns:
+            float: motor offset in degrees
+        """
         return self._offset
 
     @property
     def direct(self):
+        """motor direction CW or CCW
+
+        Returns:
+            bool: True CW
+                  Fale CCW
+        """
         return self._direct

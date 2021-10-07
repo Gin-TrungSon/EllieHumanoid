@@ -4,6 +4,8 @@
 # This file is part of the Ellie-Project,
 # and is released under the "MIT License Agreement". Please see the LICENSE
 # file that should have been included as part of this package.
+import sys
+sys.path.append("")
 import os
 from ellie_msgs.srv import String
 from PyQt5.QtWidgets import QApplication, QDesktopWidget, QLabel
@@ -15,8 +17,7 @@ from rclpy.node import Node
 import rclpy
 import random
 import datetime
-import sys
-sys.path.append("")
+
 
 
 class EllieScreen(Node):
