@@ -139,7 +139,7 @@ class EllieMotors:
         )
         self.bust_x = Motor(
             name="bust_x",
-            offset=0.0,
+            offset=2.0,
             model=MotorType.MX_28,
             id=35,
             angle_limit=[-20, 20],
