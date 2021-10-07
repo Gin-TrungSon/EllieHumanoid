@@ -18,7 +18,7 @@ from pathlib import Path
 import os
 
 IDs = [36,37,33,34,35,41,42,43,44,51,52,53,54]
-IDLE = [0,0,0,0,0,80,5,0,0,-80,-5,0,0]
+IDLE = [0,0,0,0,0,80,75,0,90,-80,-75,0,-90]
 class Ros2Interface(Node):
 
     def __init__(self):
