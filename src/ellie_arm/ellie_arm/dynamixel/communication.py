@@ -160,11 +160,11 @@ class DxlInterface:
         if velocities == None:
             for i, p in zip(ids, positions):
                 motor = self._motors.get_motor(i)
-                data[motor.name] = [p, 0]
+                data[motor.name] = [p-motor.offset, 0]
         else:
             for i, p, v in zip(ids, positions, velocities):
                 motor = self._motors.get_motor(i)
-                data[motor.name] = [p, v]
+                data[motor.name] = [p-motor.offset, v]
         self.execute_trajectories(data, duration)
 
     def goto_position_sync(self, positions, duration):
