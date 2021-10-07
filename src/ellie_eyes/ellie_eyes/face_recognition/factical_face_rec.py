@@ -11,7 +11,7 @@ import time
 import numpy as np
 import sys
 sys.path.append("")
-import cv2.cv2 as cv2
+import cv2 as cv2
 from ellie_eyes.ellie_eyes_utils import Stream
 import ellie_eyes.face_recognition.factical_recognition as factical_recognition
 
@@ -36,6 +36,9 @@ class FaceRecognition():
         while (stream.isOpened()):
             try:
                 frame = stream.get_frame()
+                if frame == None:
+                    print("Frame None")
+                    continue
                 # read a fream
                 frame, _, _ = self.inference(frame)
 
