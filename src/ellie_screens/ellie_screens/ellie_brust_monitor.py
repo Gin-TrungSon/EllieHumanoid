@@ -6,13 +6,15 @@
 # file that should have been included as part of this package.
 import sys
 sys.path.append("")
-from ellie_msgs.srv import String
-from PyQt5.QtWidgets import QApplication, QDesktopWidget, QLabel
-from PyQt5.QtCore import QUrl, QTimer
-from PyQt5.QtWebEngineWidgets import *
-from threading import Thread
-from rclpy.node import Node
 import rclpy
+from rclpy.node import Node
+from threading import Thread
+from PyQt5.QtWebEngineWidgets import *
+from PyQt5.QtCore import QUrl, QTimer
+from PyQt5.QtWidgets import QApplication, QDesktopWidget, QLabel
+from ellie_msgs.srv import String
+
+
 
 class OpenWebView(QDesktopWidget):
     def __init__(self):
@@ -43,7 +45,6 @@ class OpenWebView(QDesktopWidget):
         self.timer_one.start(30000)
 
     def resetHomePage(self):
-
         self.webview.load(QUrl("https://www.th-nuernberg.de/"))
 
     def open(self, url):
@@ -52,6 +53,7 @@ class OpenWebView(QDesktopWidget):
     def _open(self, url):
         self._resetTimer()
         self.webview.load(QUrl(url))
+
 
 class EllieBrustMotnior(Node):
     def __init__(self):
@@ -64,7 +66,6 @@ class EllieBrustMotnior(Node):
         self.webView = OpenWebView()
         sys.exit(app.exec_())
 
-
     def openUrl_callback(self, request, response):
         print(f"open : {request.request}")
         try:
@@ -76,6 +77,7 @@ class EllieBrustMotnior(Node):
 
     def open(self, url):
         self.webView.open(url)
+
 
 def main(args=None):
     rclpy.init(args=args)
