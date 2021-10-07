@@ -12,10 +12,14 @@ from numpy.core.numeric import Infinity
 from scipy.spatial import cKDTree
 import json
 import time
-# https://stackoverflow.com/questions/29094458/find-integer-nearest-neighbour-in-a-dict
 
 
 class KDDict(dict):
+    """
+        Dictionary to return the value with closest key
+        https://stackoverflow.com/questions/29094458/find-integer-nearest-neighbour-in-a-dict
+    """
+
     def __init__(self, ndims=1, regenOnAdd=False):
         super(KDDict, self).__init__()
         self.ndims = ndims
@@ -40,8 +44,15 @@ class KDDict(dict):
         self.__tree = cKDTree(self.__keys)
         self.__stale = False
 
-    # Helper method and might be of use
     def nearest_key(self, key):
+        """Find a closest time stamp
+
+        Args:
+            key (float): time stamp
+
+        Returns:
+            float: closest time stamp
+        """
         if not isinstance(key, tuple):
             key = (key,)
         if self.__stale:
@@ -50,6 +61,11 @@ class KDDict(dict):
         return self.__keys[idx]
 
     def getKeys(self):
+        """Get all keys of dictionary
+
+        Returns:
+            list: keys
+        """
         return self.__keys
 
     def __missing__(self, key):
@@ -77,39 +93,92 @@ class Behavior():
 
     @property
     def frame_rate(self):
+        """the rate to update frame
+
+        Returns:
+            float: frame rate
+        """
         return self._frame_rate
 
     def add_position(self, position, velocity, time):
+        """Add new state of motors at the stamped time
+
+        Args:
+            position (list): current motors position
+            velocity (list): current motors velocity
+            time (float): time stamp
+        """
         self._stamped_positions[time] = [position, velocity]
 
     @property
     def stamped_positions(self):
+        """Get all positions with time stamp
+
+        Returns:
+            KDict: positions
+        """
         return self._stamped_positions
 
     @property
     def id(self):
+        """Get Behavior Id
+
+        Returns:
+            string: Behavior name
+        """
         return self._id
 
     def get_position(self, key):
+        """Get nearest position at a time stamp
+
+        Args:
+            key (float): time stamp
+        """
         self.stamped_positions[self.stamped_positions.nearest_key(key)]
 
     @classmethod
     def create(cls, id, dxl_interface, d):
+        """Create new behavior from recorded file
+
+        Args:
+            id (string): Behavior name
+            dxl_interface (DxlInterface): Dynamixel communication interface
+            d (OrderedDict): A Dictionary that contains [framerate] and [posittion] element
+
+        Returns:
+            Behavior: new behavior from file
+        """
         behavior = cls(id, dxl_interface, d['framerate'])
         behavior.setItems(d['positions'])
         return behavior
 
     @classmethod
     def load(cls, id, dxl_interface, file):
+        """Load Behavior as a dict from file
+
+        Args:
+            id (string): Behavior name
+            dxl_interface (DxlInterface): Dynamixel communication interface
+            file (string): json file path
+
+        Returns:
+            Behavior: new behavior from file
+        """
         d = json.load(file)
         return cls.create(id, dxl_interface, d)
 
     @property
     def duration(self):
+        """Duration
+
+        Returns:
+            float: time interval
+        """
         return 1.0/float(self.frame_rate)
 
     def start_recorder(self):
-
+        """Start to recode new behavior
+        """
         self.running_event = threading.Event()
         self.running_event.set()
         self.recorder = threading.Thread(
@@ -126,20 +195,33 @@ class Behavior():
         self.recorder.start()
 
     def stop_recorder(self):
+        """Stop the recording
+        """
         self.setItems(self._recorded_positions)
         self.running_event.clear()
 
     def resume_recorder(self):
+        """Resume the recording
+        """
         self.running_event.set()
 
     def replay(self):
+        """Replax the recorded behavior
+        """
         self.execute()
 
     def execute(self):
+        """Execute current behavior
+        """
         self._dxl_interface.goto_position_sync(
             self.stamped_positions, self.duration)
 
     def save(self, file):
+        """Save behavior file 
+
+        Args:
+            file (string): the path to save file
+        """
         with open(file, "w") as f:
             self.stop = True
             self.running_event.set()
@@ -170,8 +252,8 @@ class Behavior():
             time_stamped += period
 
 
-if __name__ == "__main__":
-    pass
+# if __name__ == "__main__":
+#     pass
     # with open("src/ellie/ellie_body/actions/dance_handsup.move") as f:
     #     b = Behavior.load(f)
     #     print(
