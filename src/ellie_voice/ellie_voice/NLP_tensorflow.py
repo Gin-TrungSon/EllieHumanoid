@@ -178,10 +178,10 @@ class Inference():
 
 
 if __name__ == "__main__":
-    # training()
-    infer = Inference()
-    while True:
-        input_data = input("You- ")
-        print(input_data)
-        answer = infer.response(input_data)
-        print(answer)
+    training()
+    # infer = Inference()
+    # while True:
+    #     input_data = input("You- ")
+    #     print(input_data)
+    #     answer = infer.response(input_data)
+    #     print(answer)
