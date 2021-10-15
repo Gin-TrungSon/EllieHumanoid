@@ -22,7 +22,7 @@ class DxlInterface:
 
     def __init__(self, motors, port='/dev/ttyUSB0', baudrate=1000000, time_out=0.05):
         self._motors = motors
-        self.open(port, baudrate, time_out)
+        self.open(port)
 
     def open(self, port):
         """Open port and set up read write methods
