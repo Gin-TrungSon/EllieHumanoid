@@ -24,7 +24,12 @@ class DxlInterface:
         self._motors = motors
         self.open(port, baudrate, time_out)
 
-    def open(self, port, baudrate, time_out):
+    def open(self, port):
+        """Open port and set up read write methods
+
+        Args:
+            port ([type]): [description]
+        """
         self.port = PortHandler(port)
         if self.port.openPort():
             print("Succeeded to open the port")
@@ -53,23 +58,68 @@ class DxlInterface:
 
     @property
     def registered_motors(self):
+        """Get all motors that have registed
+
+        Returns:
+            dict<motorID,Motor>: motors
+        """
         return self._motors.motors
 
     def scan(self, ids=range(254)):
+        """Scan avaiable motors
 
+        Args:
+            ids (list[int], optional): fessible motor ids. Defaults to range(254).
+
+        Returns:
+            lit[int]: list of motor ids
+        """
         return [id for id in ids if self.ping(id)]
 
     def ping(self, dxl_id):
+        """ping to a motor
+
+        Args:
+            dxl_id (int): motor id
+
+        Returns:
+            bool: return True if pingable
+        """
         _, result, _ = self.packetHandler.ping(self.port, dxl_id)
         return True if result == COMM_SUCCESS else False
 
     def get_model(self, dxl_id):
+        """Get motor model
+
+        Args:
+            dxl_id (int): motor id
+
+        Returns:
+            MotorType: type of motor  e.g MX_12, MX_24
+        """
         return dynamixelModels[self.packetHandler.read2ByteTxRx(self.port, dxl_id, MODEL_NUMBER)[0]]
 
     def get_firmware_version(self, dxl_id):
+        """Get firmware version
+
+        Args:
+            dxl_id (int): motor id
+
+        Returns:
+            Any: Protocol 1.0 or 2.0
+        """
         return self.packetHandler.read1ByteTxRx(self.port, dxl_id, FIRMWARE_VERSION)
 
     def change_id(self, dxl_id, new_dxl_id):
+        """change motor id
+
+        Args:
+            dxl_id (int): current motor id
+            new_dxl_id (int): new motor id
+
+        Raises:
+            ValueError: rase a error if id is already used
+        """
         if not self.ping(new_dxl_id):
             self.packetHandler.write1ByteTxRx(
                 self.port, dxl_id, ID, new_dxl_id)
@@ -77,47 +127,137 @@ class DxlInterface:
             raise ValueError(f'id {new_dxl_id} is already used.')
 
     def change_baudrate(self, dxl_id, new_baurate):
+        """change communication baudrate of a motor
+
+        Args:
+            dxl_id (int): motor id
+            new_baurate (int): new baudrate 
+
+        Raises:
+            ValueError: rase a error if baudrate is not supported
+        """
         if new_baurate in AVAILABLE_BAUDRATE:
             self.packetHandler.write1ByteTxRx(
                 self.port, dxl_id, BAUDRATE, new_baurate)
         else:
-            raise ValueError(f' baurate {new_baurate} is not supported')
+            raise ValueError(f' baudrate {new_baurate} is not supported')
 
     def get_status_return_level(self, dxl_id):
+        """The Stuatus Return Level decides how to return Status Packet when DYNAMIXEL receives an Instruction Packet.
+
+        Args:
+            dxl_id (int): motor id
+
+        Returns:
+            int: 0 Returns the Status Packet for PING Instruction only
+                 1 Returns the Status Packet for PING and READ Instruction
+                 2 Returns the Status Packet for all Instructions
+        """
         return self.packetHandler.read1ByteTxRx(self.port, dxl_id, STATUS_RETURN_LEVEL)
 
     def get_pid_gain(self, dxl_id):
+        """Get PID value
+
+        Args:
+            dxl_id (int): motor id
+
+        Returns:
+            list<int>: PID value
+        """
         return [self.packetHandler.read1ByteTxRx(self.port, dxl_id, P_GAIN),
                 self.packetHandler.read1ByteTxRx(self.port, dxl_id, I_GAIN),
                 self.packetHandler.read1ByteTxRx(self.port, dxl_id, D_GAIN), ]
 
     def set_pid_gain(self, dxl_id, P, I, D):
+        """[summary]
+
+        Args:
+            dxl_id (int): motor id
+            P (int): P value
+            I (int): I value
+            D (int): D value
+        """
         self.packetHandler.writeByteTxRx(self.port, dxl_id, P_GAIN, P)
         self.packetHandler.writeByteTxRx(self.port, dxl_id, I_GAIN, I)
         self.packetHandler.writeByteTxRx(self.port, dxl_id, D_GAIN, D)
 
     def switch_led_on(self, dxl_id):
+        """Turn the Led on
+
+        Args:
+            dxl_id (int): motor id
+        """
         self.packetHandler.write1ByteTxRx(self.port, dxl_id, STATUS_LED, 1)
 
     def switch_led_off(self, dxl_id):
+        """Turn the Led off
+
+        Args:
+            dxl_id (int): motor id
+        """
         self.packetHandler.write1ByteTxRx(self.port, dxl_id, STATUS_LED, 0)
 
     def enable_torque(self, dxl_id):
+        """Enable torque
+
+        Args:
+            dxl_id (int): motor id
+        """
         self.packetHandler.write1ByteTxRx(self.port, dxl_id, TORQUE_ENABLE, 1)
 
     def disable_torque(self, dxl_id):
+        """Disable torque
+
+        Args:
+            dxl_id (int): motor id
+        """
         self.packetHandler.write1ByteTxRx(self.port, dxl_id, TORQUE_ENABLE, 0)
 
     def present_position(self, dxl_id):
+        """Get current resolution divider motor position
+
+        Args:
+            dxl_id (int): motor id
+
+        Returns:
+            int: current resolution divider position 
+        """
         return self.packetHandler.read2ByteTxRx(self.port, dxl_id, PRESENT_POSITION)[0]
 
     def present_position_degree(self, dxl_id, model_type):
+        """Get current motor position in grads
+
+        Args:
+            dxl_id (int): motor id
+            model_type (MotorType): type of motor
+
+        Returns:
+            float: current motor position in grads
+        """
         return dxl_to_degree(self.packetHandler.read2ByteTxRx(self.port, dxl_id, PRESENT_POSITION)[0], model_type)
 
     def present_speed(self, dxl_id, model_type):
+        """Get current moving speed 
+           0 ~ 2,047 (0x000 ~ 0x7FF) can be used.
+           If a value is in the rage of 0 ~ 1,023 then the motor rotates to the CCW direction.
+           If a value is in the rage of 1,024 ~ 2,047 then the motor rotates to the CW direction.
+
+        Args:
+            dxl_id (int): motor id
+            model_type (MotorType): type of motor
+
+        Returns:
+            int: current moving speed  0 ~ 2047
+        """
         return dxl_to_speed(self.packetHandler.read2ByteTxRx(self.port, dxl_id, PRESENT_SPEED)[0], model_type)
 
     def _set_goal(self, dxl_id, value):
+        """Set goal position for a motor
+
+        Args:
+            dxl_id (int): motor id
+            value (float): goal position in degrees
+        """
         motor = self._motors.get_motor(dxl_id)
         dxl_value = clamp(value,
                           motor.angle_limit[0], motor.angle_limit[1], dxl_id)
@@ -129,6 +269,12 @@ class DxlInterface:
             print("%s" % self.packetHandler.getRxPacketError(error))
 
     def set_moving_speed(self, dxl_id, value):
+        """Set moving speed to a motor
+
+        Args:
+            dxl_id (int): motor id
+            value (float): moving speed degrees/s
+        """
         motor = self._motors.get_motor(dxl_id)
         dxl_value = speed_to_dxl(value, motor.type)
         result, error = self.packetHandler.write2ByteTxRx(
@@ -139,6 +285,16 @@ class DxlInterface:
             print("%s" % self.packetHandler.getRxPacketError(error))
 
     def goto_position(self, dxl_id, position, duration):
+        """Go to postion in a known interval
+
+        Args:
+            dxl_id (int): motor id
+            position (float): goal position in degrees
+            duration (float): time interval for the motion implementing
+
+        Raises:
+            ValueError: rase a error if motor not valid
+        """
         model_type = self._motors.get_modelType(dxl_id)
         present_position = dxl_to_degree(
             self.present_position(dxl_id), model_type)
@@ -156,6 +312,14 @@ class DxlInterface:
                 time_ += dt
 
     def goto_position_group(self, duration, ids,  positions, velocities=None):
+        """Go to position synchrony
+
+        Args:
+            duration (float): time interval for the motion implementing
+            ids (list[int]): mototr ids
+            positions (list[float]): goal positions
+            velocities (float, optional): velocities. Defaults to None.
+        """
         data = {}
         if velocities == None:
             for i, p in zip(ids, positions):
@@ -168,6 +332,12 @@ class DxlInterface:
         self.execute_trajectories(data, duration)
 
     def goto_position_sync(self, positions, duration):
+        """go to stamped posititon in a KDdicht
+
+        Args:
+            positions (KDdict): a dictionary represens positions with time stamps
+            duration (float): time interval for the motion implementing
+        """
         time_ = 0
         self.execute_trajectories(positions[time_], 2)
         time_ += duration
@@ -176,14 +346,23 @@ class DxlInterface:
             item = positions[time_]
             self._goto_position_sync(item)
             dt = time.time()-start
-            # if (dt < duration):
-            #     time.sleep(duration-dt)
             time_ += dt
 
-            #input('press to continue')
     def _goto_position_sync(self, item, max_speed=-1):
-        try:
+        """Go to goal position synchrony
 
+        Args:
+            item (list): list of motor state 
+                         eg.  "r_elbow_y": [
+                                 -10.090000000000003,
+                                 -0.0
+                                ],
+            max_speed (int, optional): maximal verlocity. Defaults to -1.
+
+        Raises:
+            ValueError: raise a error if motor invalid
+        """
+        try:
             for name, value in item.items():
                 motor = self._motors.get_attribute(name)
 
@@ -219,6 +398,14 @@ class DxlInterface:
             self.groupSyncWriteVerlocity.clearParam()
 
     def read_data_sync(self):
+        """Read motors state sychrony
+
+        Raises:
+            ValueError: raise a error if motor invalid
+
+        Returns:
+            dict<motorId,<position,velocity>>: motor position states
+        """
         try:
             data = {}
 
@@ -232,6 +419,14 @@ class DxlInterface:
             raise ValueError("motors are not registed yet !")
 
     def record_trajectories(self, period, start_time, old_positions, data):
+        """Create Minjerk trajectory
+
+        Args:
+            period (float): periode for position updating
+            start_time (float): start time
+            old_positions (dict): last position of motors
+            data (KDdict): calculated trajectory in KDdict
+        """
         trajectories = {}
         motor_names = []
         velocities = []
@@ -260,6 +455,15 @@ class DxlInterface:
                 time_ += period
 
     def execute_trajectories(self, positions, duration):
+        """Execute a trajectory from KDdict
+
+        Args:
+            positions (KDdict): position states
+            duration (float): time interval for the motion implementing
+
+        Raises:
+            ValueError: raise a error if motor invalid
+        """
         trajectories = {}
         motor_names = []
         for name, value in positions.items():
@@ -299,7 +503,6 @@ if __name__ == "__main__":
     # x.switch_led_on(13)
     # input("swith led off")
     # x.switch_led_off(13)
-
     while True:
         try:
             present_pos, _, _ = x.present_position(53)

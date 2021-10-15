@@ -42,69 +42,138 @@ class EllieArm():
 
     @property
     def urdf(self):
+        """Get urdf file path
+
+        Returns:
+            string: file path
+        """
         if self._urdf == "":
             self._urdf = os.path.join(Path(
                 __file__).parent.parent.parent, "urdf/ellie.urdf")
         return self._urdf
 
     def attach_behavior(self, behavior_path):
+        """registe a behavior 
+
+        Args:
+            behavior_path (string): Behavior recorded file
+        """
         key = Path(behavior_path).stem
         with open(behavior_path) as f:
             self.behaviors[key] = Behavior.load(key, self.dxl_interface, f)
 
     def get_attached_behaviors(self):
+        """Get all registed behaviors
+
+        Returns:
+            list: list of behavior ids
+        """
         return list(self.behaviors.keys())
+
     def goto_position(self, chain_id, position, duration):
+        """Go to position in 3D koordinate
+
+        Args:
+            chain_id (int): 0-Left arm
+                            1-Right arm
+            position (list): position [x,y,z]
+            duration (float): time interval for motion implementing
+        """
         if chain_id == 0:
             self.l_arm_chain.goto(position, duration)
         elif chain_id == 1:
             self.r_arm_chain.goto(position, duration)
+
     def goto_joint_position(self,id, position, duration):
+        """Go to joint position
+
+        Args:
+            id (int): motor ID
+            position (float): goal position in degrees
+            duration (float): time interval for motion implementing
+        """
         self.dxl_interface.goto_position(id,position,duration)
         
     def remove_behavior(self, behavior_id):
+        """unregisted a behavior
+
+        Args:
+            behavior_id (string): behavior name
+        """
         if behavior_id in self.behaviors.keys():
             del self.behaviors[behavior_id]
             print(f"Remove behavior {behavior_id}")
 
     def execute_behavior(self, behavior_id):
+        """Execute a beahvior
+
+        Args:
+            behavior_id (string ): bahvior name
+        """
         self.behaviors[behavior_id].execute()
 
     def start_recorder(self, id, frequency=50):
+        """Start to record
+
+        Args:
+            id (string): new behavior name
+            frequency (float, optional): record frequenz. Defaults to 50.
+        """
         self.recording_behavior = Behavior(id, self.dxl_interface, frequency)
         self.recording_behavior.start_recorder()
 
     def stop_recorder(self):
+        """Stop the recoding
+        """
         if self.recording_behavior == None:
             print("No recorder started yet ")
         else:
             self.recording_behavior.stop_recorder()
 
     def resume_recorder(self):
+        """Resume the recoding
+        """
         if self.recording_behavior == None:
             print("No recorder started yet ")
         else:
             self.recording_behavior.resume_recorder()
 
     def replay(self):
+        """Replay the recoding
+        """
         if self.recording_behavior == None:
             print("No recorder started yet ")
         else:
             self.recording_behavior.replay()
 
     def save_recorder_file(self, dir=BEHAVIORS_DIR):
+        """Save recorded file
+
+        Args:
+            dir (string, optional): file path. Defaults to BEHAVIORS_DIR.
+        """
         if self.recording_behavior == None:
             print("No recorder started yet ")
         else:
             file = os.path.join(dir, self.recording_behavior.id+".move")
             self.recording_behavior.save(file)
             self.behaviors[self.recording_behavior.id] = self.recording_behavior
-            self.delede_recorder()
+            self.delete_recorder()
 
-    def delede_recorder(self):
+    def delete_recorder(self):
+        """Delete recorded file
+        """
         self.recording_behavior = None
 
     def isIdExisted(self, id):
+        """Check if motor existed
+
+        Args:
+            id (int): motor Id
+
+        Returns:
+            bool: motor existed?
+        """
         try:
             if self.motors.get_motor(int(id)) != None or self.motors.get_motor_by_name(str(id)) != None:
                 return True

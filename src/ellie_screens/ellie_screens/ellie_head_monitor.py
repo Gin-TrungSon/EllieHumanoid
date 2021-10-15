@@ -5,7 +5,7 @@
 # and is released under the "MIT License Agreement". Please see the LICENSE
 # file that should have been included as part of this package.
 import os
-
+import sys
 from PyQt5 import QtCore
 from ellie_msgs.srv import String
 from PyQt5.QtWidgets import QApplication, QDesktopWidget, QLabel
@@ -17,7 +17,9 @@ from rclpy.node import Node
 import rclpy
 import random
 import datetime
-import sys
+
+
+
 class EyesAnimation (QDesktopWidget):
     def __init__(self):
         super().__init__()
@@ -26,8 +28,8 @@ class EyesAnimation (QDesktopWidget):
         screen = self.screenGeometry(1)
         width = screen.width()
         height = screen.height()
-        self.setWindowFlag(QtCore.Qt.FramelessWindowHint )
-        self.setFixedSize(width, height)    
+        self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
+        self.setFixedSize(width, height)
         self.label_animation.showFullScreen()
         self.motions = {}
         self.eyes_motion_path = os.path.join(
@@ -94,6 +96,7 @@ class EyesAnimation (QDesktopWidget):
         self.motion.stop()
         self.close()
 
+
 class EllieHeadMonitor(Node):
     def __init__(self):
         super().__init__("ellie_screen")
@@ -102,7 +105,7 @@ class EllieHeadMonitor(Node):
 
     def ui_init__(self):
         app = QApplication(sys.argv)
-        self.eyes_animation = EyesAnimation()        
+        self.eyes_animation = EyesAnimation()
         sys.exit(app.exec_())
 
     def changeEyesMotion_callback(self, request, response):
@@ -125,6 +128,7 @@ class EllieHeadMonitor(Node):
 
     def changeEyesMotion(self, motionId):
         self.eyes_animation.changeEyeMotion(motionId)
+
 
 def main(args=None):
     rclpy.init(args=args)

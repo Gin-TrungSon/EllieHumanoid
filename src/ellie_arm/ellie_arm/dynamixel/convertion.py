@@ -4,8 +4,9 @@
 # import pathlib
 # import json
 
-# path = pathlib.Path("src/ellie/ellie_body/actions")
+# path = pathlib.Path("/home/trungson/EllieHumanoid/src/ellie_arm/actions")
 # files = [e for e in path.iterdir() if e.is_file()]
+
 # for i in files:
     
 #     with open(i, 'r+') as f:
