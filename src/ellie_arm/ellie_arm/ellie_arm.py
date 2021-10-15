@@ -138,6 +138,7 @@ class Ros2Interface(Node):
             self.get_logger().info(f"Executing behavior {id}")
             try :
                 self.ellie_arm.execute_behavior(id)
+                self.gotoIdle()
             except:
                 goal_handle.abort()
             goal_handle.succeed()

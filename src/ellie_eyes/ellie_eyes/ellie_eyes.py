@@ -91,8 +91,11 @@ class EllieEyes(Node):
 
     def update(self):
         frame = self.stream.read()
-        if frame.all() == None:
-            print("Frame None")
+        try:
+            if frame.all() == None:
+                print("Frame None")
+                return
+        except:
             return
         self._obj_frame, self._obj_boxes, self._obj_classes, self.scores = self.object_detection.inference(
             frame)
