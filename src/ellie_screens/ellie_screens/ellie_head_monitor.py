@@ -26,8 +26,8 @@ class EyesAnimation (QDesktopWidget):
         self.external_change = ""
         self.label_animation = QLabel()
         screen = self.screenGeometry(1)
-        width = screen.width()
-        height = screen.height()
+        width = 800 #screen.width()
+        height = 600 #screen.height()
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
         self.setFixedSize(width, height)
         self.label_animation.showFullScreen()
