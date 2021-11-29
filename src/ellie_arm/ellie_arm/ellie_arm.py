@@ -88,6 +88,7 @@ class Ros2Interface(Node):
                 self.get_logger().info(f"Executing behavior {id} ...")
                 self.ellie_arm.execute_behavior(id)
                 response.response= f"Executed behavior {id}"
+                self.gotoIdle()
             except SystemError as e:
                 response.response = e.__str__()
         return response
