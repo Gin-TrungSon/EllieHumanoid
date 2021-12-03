@@ -148,7 +148,8 @@ class Behavior():
         Returns:
             Behavior: new behavior from file
         """
-        behavior = cls(id, dxl_interface, d['framerate'])
+        #behavior = cls(id, dxl_interface, d['framerate'])
+        behavior = cls(id, dxl_interface, 50) # set fz = 50
         behavior.setItems(d['positions'])
         return behavior
 

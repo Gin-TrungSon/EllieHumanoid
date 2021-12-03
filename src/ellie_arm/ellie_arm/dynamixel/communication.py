@@ -331,7 +331,7 @@ class DxlInterface:
                 data[motor.name] = [p-motor.offset, v]
         self.execute_trajectories(data, duration)
 
-    def goto_position_sync(self, positions, duration):
+    def goto_position_sync(self, positions, step_duration):
         """go to stamped posititon in a KDdicht
 
         Args:
@@ -340,13 +340,16 @@ class DxlInterface:
         """
         time_ = 0
         self.execute_trajectories(positions[time_], 2)
-        time_ += duration
-        while time_ < len(positions)*duration:
-            start = time.time()
-            item = positions[time_]
-            self._goto_position_sync(item)
-            dt = time.time()-start
-            time_ += dt
+        _lastcmd = time.time() 
+        _nextcmd = _lastcmd+step_duration
+        _timeout = _lastcmd + len(positions)*step_duration
+        while _nextcmd <= _timeout:
+            if time.time() > _nextcmd:
+                item = positions[time_]
+                self._goto_position_sync(item)
+                _lastcmd = _nextcmd
+                _nextcmd += step_duration
+                time_ += step_duration
 
     def _goto_position_sync(self, item, max_speed=-1):
         """Go to goal position synchrony
