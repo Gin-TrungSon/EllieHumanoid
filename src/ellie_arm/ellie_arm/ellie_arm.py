@@ -91,6 +91,8 @@ class Ros2Interface(Node):
                 self.gotoIdle()
             except SystemError as e:
                 response.response = e.__str__()
+        else:
+            response.response = f"Behavior {id} not found"
         return response
 
     def goto_position_callback(self, goal_handle):
