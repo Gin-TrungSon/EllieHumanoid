@@ -1,0 +1,18 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "",
+        "limitSymbolsToIncludedHeaders": true
+      },
+      "includePath": [
+        "/opt/ros/foxy/include/**",
+        "/usr/include/**",
+        "src/ellie_voice",
+        "src/ellie_arm/"
+      ],
+      "name": "ROS"
+    }
+  ],
+  "version": 4
+}
